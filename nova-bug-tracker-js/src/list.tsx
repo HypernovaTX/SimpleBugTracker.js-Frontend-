@@ -22,5 +22,29 @@ export class BugTrackerList extends React.Component<Props, State> {
         }
     }
 
-    
+    pullData() {
+        const getData = async() => {
+            try {
+                await axios.get(CONFIG.api.source);
+            } catch(error) {
+                console.log(error);
+            }
+        }
+        return getData;
+    }
+
+    render() {
+        const data = this.pullData || "Loading...";
+        let display = <React.Fragment/>;
+
+        if (this.props.showDisplay) {
+            display = (
+                <div>{data}</div>
+            );
+        }
+
+        return (
+            {display}
+        );
+    }
 }
