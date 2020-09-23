@@ -8,10 +8,10 @@ type State = {
     filter: string[],       //Used for filtering the list
 };
 
-export default axios.create({
+/*export default axios.create({
     baseURL: CONFIG.api.source,
     responseType: "json"
-  });
+  });*/
 
 export class BugTrackerList extends React.Component<Props, State> {
     constructor(p: Props) {
@@ -25,7 +25,13 @@ export class BugTrackerList extends React.Component<Props, State> {
     pullData() {
         const getData = async() => {
             try {
-                await axios.get(CONFIG.api.source);
+                await axios({
+                    'url': CONFIG.api.source,
+                    'method': 'get',
+                    'data': {
+                        'key': CONFIG.api.key
+                    }
+                });
             } catch(error) {
                 console.log(error);
             }
@@ -34,17 +40,15 @@ export class BugTrackerList extends React.Component<Props, State> {
     }
 
     render() {
-        const data = this.pullData || "Loading...";
+        const data = this.pullData() || "Loading...";
         let display = <React.Fragment/>;
 
         if (this.props.showDisplay) {
-            display = (
-                <div>{data}</div>
-            );
+            display = <div>{data}</div>;
         }
 
         return (
-            {display}
+            <div>{display}</div>
         );
     }
 }
