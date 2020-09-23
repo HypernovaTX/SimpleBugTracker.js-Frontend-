@@ -1,12 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import { BugTrackerList } from './list';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BugTrackerList showDisplay={true}/>
   </React.StrictMode>,
   document.getElementById('root')
 );
