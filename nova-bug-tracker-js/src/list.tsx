@@ -9,7 +9,7 @@ type State = {
     listItems: string,      //Items on the list (as objects as per item and list as arrays)
     filter: string[],       //Used for filtering the list
     loading: boolean,       //Used for loading that loads list
-    globalLoading: boolean  //User for loading that covers the entire screen
+    globalLoading: boolean //User for loading that covers the entire screen
 };
 
 /*export default axios.create({
@@ -24,12 +24,16 @@ export class BugTrackerList extends React.Component<Props, State> {
             listItems: '',
             filter: [],
             loading: true,
-            globalLoading: true
+            globalLoading: true,
         }
+    }
+    API_Request = NodeJS.Timeout;
+
+    componentDidMount() {
+        this.API_Request = setInterval(() => this.getData(), 10000);
     }
 
     getData = () => {
-        //console.log(`GET url: ${CONFIG.api.source}`);
         axios.get(CONFIG.api.source)
             .then((response) => {
                 this.setState({ loading: false, listItems: JSON.stringify(response.data) });
@@ -45,32 +49,10 @@ export class BugTrackerList extends React.Component<Props, State> {
         }
         return output;
     }
-
-    /*pullData() {
-        const getData = () => {
-            axios.get(CONFIG.api.source).then(response => {
-                console.log(response);
-            });
-            return "data pulled";
-            try {
-                await axios({
-                    'url': CONFIG.api.source,
-                    'method': 'get',
-                    'data': {
-                        'key': CONFIG.api.key
-                    }
-                });
-            } catch(error) {
-                console.log(error);
-            }
-        }
-        return getData;
-    }*/
-
-    
+    //
 
     render() {
-        this.getData();
+        //this.getData();
         let data = ([<div>Loading...</div>]);
         if (this.state.loading === false) {
             data = this.formatListItem(this.state.listItems);
