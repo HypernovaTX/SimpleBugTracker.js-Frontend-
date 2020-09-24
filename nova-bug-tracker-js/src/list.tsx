@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import * as CONFIG from './config.json';
 import { TEMPLATE } from './lib/template';
+import { type } from 'os';
 //import { ReactComponent } from '*.svg';
 
 type Props = { showDisplay: boolean };
@@ -12,25 +13,24 @@ type State = {
     globalLoading: boolean //User for loading that covers the entire screen
 };
 
-/*export default axios.create({
-    baseURL: CONFIG.api.source,
-    responseType: "json"
-  });*/
-
 export class BugTrackerList extends React.Component<Props, State> {
+    API_Request: NodeJS.Timeout;
+    
     constructor(p: Props) {
         super(p);
         this.state = {
             listItems: '',
             filter: [],
             loading: true,
-            globalLoading: true,
+            globalLoading: true
         }
+        this.API_Request = setInterval(() => {}, 9999999999);
     }
-    API_Request = NodeJS.Timeout;
 
     componentDidMount() {
         this.API_Request = setInterval(() => this.getData(), 10000);
+        this.getData();
+        setInterval(() => this.getData(), 10000);
     }
 
     getData = () => {
