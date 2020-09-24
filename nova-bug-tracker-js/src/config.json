@@ -1,4 +1,7 @@
 {
+    "general": {
+        "timezone": -5
+    },
     "api": {
         "source": "http://localhost:8080/",
         "key": "APIKEYPLACEHOLDER"

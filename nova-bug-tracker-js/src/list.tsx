@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import * as CONFIG from './config.json';
+import { TEMPLATE } from './lib/template';
 //import { ReactComponent } from '*.svg';
 
 type Props = { showDisplay: boolean };
@@ -38,19 +39,11 @@ export class BugTrackerList extends React.Component<Props, State> {
 
     formatListItem(incomingData: string) {
         const imported = JSON.parse(incomingData);
-        let output = <React.Fragment />;
+        let output = [<React.Fragment />];
         for (var i = 0; i < imported.length; i ++) {
-            const tid = imported[i].tid;
-            const title = imported[i].title;
-
-            let block = <div key={`ticket${tid}`} className="ticket-block">
-                <div key={`ticketHead${tid}`} className="ticket-head">
-                    <div key={`ticketTitle${tid}`} className="ticket-title">
-                        {title}
-                    </div>
-                </div>
-            </div>;
+            output.push(TEMPLATE.ticketItem(imported[i]));
         }
+        return output;
     }
 
     /*pullData() {
@@ -78,9 +71,9 @@ export class BugTrackerList extends React.Component<Props, State> {
 
     render() {
         this.getData();
-        let data = 'Loading...';
+        let data = ([<div>Loading...</div>]);
         if (this.state.loading === false) {
-            data = this.state.listItems;
+            data = this.formatListItem(this.state.listItems);
         }
         let display = <React.Fragment/>;
 
