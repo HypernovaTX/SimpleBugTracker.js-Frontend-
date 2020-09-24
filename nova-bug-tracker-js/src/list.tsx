@@ -1,12 +1,14 @@
 import React from 'react';
 import axios from 'axios';
 import * as CONFIG from './config.json';
+//import { ReactComponent } from '*.svg';
 
 type Props = { showDisplay: boolean };
 type State = {
-    listItems: string,    //Items on the list (as objects as per item and list as arrays)
+    listItems: string,      //Items on the list (as objects as per item and list as arrays)
     filter: string[],       //Used for filtering the list
-    loading: boolean        //Used for loading status
+    loading: boolean,       //Used for loading that loads list
+    globalLoading: boolean  //User for loading that covers the entire screen
 };
 
 /*export default axios.create({
@@ -20,7 +22,8 @@ export class BugTrackerList extends React.Component<Props, State> {
         this.state = {
             listItems: '',
             filter: [],
-            loading: true
+            loading: true,
+            globalLoading: true
         }
     }
 
@@ -29,7 +32,25 @@ export class BugTrackerList extends React.Component<Props, State> {
         axios.get(CONFIG.api.source)
             .then((response) => {
                 this.setState({ loading: false, listItems: JSON.stringify(response.data) });
+                this.formatListItem(JSON.stringify(response.data));
             });
+    }
+
+    formatListItem(incomingData: string) {
+        const imported = JSON.parse(incomingData);
+        let output = <React.Fragment />;
+        for (var i = 0; i < imported.length; i ++) {
+            const tid = imported[i].tid;
+            const title = imported[i].title;
+
+            let block = <div key={`ticket${tid}`} className="ticket-block">
+                <div key={`ticketHead${tid}`} className="ticket-head">
+                    <div key={`ticketTitle${tid}`} className="ticket-title">
+                        {title}
+                    </div>
+                </div>
+            </div>;
+        }
     }
 
     /*pullData() {
@@ -68,7 +89,12 @@ export class BugTrackerList extends React.Component<Props, State> {
         }
 
         return (
-            <div>{display}</div>
+            <div key="body" className="main-body">
+                <div key="sidebar" className="sidebar">SIDEBAR</div>
+                <div key="mainInterface" className="main-interface">
+                    {display}
+                </div>
+            </div>
         );
     }
 }
