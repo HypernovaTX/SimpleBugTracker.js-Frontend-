@@ -14,8 +14,8 @@ type State = {
 };
 
 export class BugTrackerList extends React.Component<Props, State> {
-    API_Request: NodeJS.Timeout;
-    
+    private API_Request: NodeJS.Timeout;
+
     constructor(p: Props) {
         super(p);
         this.state = {
@@ -28,9 +28,13 @@ export class BugTrackerList extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        this.API_Request = setInterval(() => this.getData(), 10000);
+        clearInterval(this.API_Request);
         this.getData();
-        setInterval(() => this.getData(), 10000);
+        this.API_Request = setInterval(() => this.getData(), 10000);
+    }
+
+    componentDidUnmount() {
+        clearInterval(this.API_Request);
     }
 
     getData = () => {
@@ -45,7 +49,10 @@ export class BugTrackerList extends React.Component<Props, State> {
         const imported = JSON.parse(incomingData);
         let output = [<React.Fragment />];
         for (var i = 0; i < imported.length; i ++) {
-            output.push(TEMPLATE.ticketItem(imported[i]));
+            const checkDelete = imported[i].status; //If status returns as -1, it is "deleted"
+            if (checkDelete !== -1) {
+                output.push(TEMPLATE.ticketItem(imported[i]));
+            }
         }
         return output;
     }
