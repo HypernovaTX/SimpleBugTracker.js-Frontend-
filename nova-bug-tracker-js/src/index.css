@@ -56,9 +56,30 @@ code {
   border-bottom: 1px solid #CCC;
   background-color: rgba(0, 0, 0, 0.05);
 }
-.ticket-author, .ticket-timestamp {
-  color: #999;
+.ticket-author, .ticket-timestamp, .ticket-status, .ticket-priority {
+  color: #333;
   font-size: 0.9em;
+}
+.status-block, .priority-block {
+  margin-left: 6px;
+  padding: 0 8px;
+  vertical-align: middle;
+
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 0.5em;
+  text-transform: uppercase;
+
+  border-radius: 1em;
+  background-color: #FFF;
+  border: solid 1px #AAA;
+}
+.priority-block {
+  color: #FFF;
+  border: solid 1px #AAA;
+}
+.priority-medium, .priority-low {
+  color: #333;
 }
 
 .ticket-body {

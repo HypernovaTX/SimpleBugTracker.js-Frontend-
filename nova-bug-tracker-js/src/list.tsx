@@ -33,7 +33,7 @@ export class BugTrackerList extends React.Component<Props, State> {
         this.API_Request = setInterval(() => this.getData(), 10000);
     }
 
-    componentDidUnmount() {
+    componentWillUnmount() {
         clearInterval(this.API_Request);
     }
 
@@ -50,7 +50,7 @@ export class BugTrackerList extends React.Component<Props, State> {
         let output = [<React.Fragment />];
         for (var i = 0; i < imported.length; i ++) {
             const checkDelete = imported[i].status; //If status returns as -1, it is "deleted"
-            if (checkDelete !== -1) {
+            if (checkDelete !== -1 && imported[i].tid !== null) {
                 output.push(TEMPLATE.ticketItem(imported[i]));
             }
         }
@@ -60,22 +60,20 @@ export class BugTrackerList extends React.Component<Props, State> {
 
     render() {
         //this.getData();
-        let data = ([<div>Loading...</div>]);
+        let data = ([<div key="startLoad">Loading...</div>]);
         if (this.state.loading === false) {
             data = this.formatListItem(this.state.listItems);
         }
         let display = <React.Fragment/>;
 
         if (this.props.showDisplay) {
-            display = <div>{data}</div>;
+            display = <div key="mainInterface" className="main-interface">{data}</div>;
         }
 
         return (
             <div key="body" className="main-body">
                 <div key="sidebar" className="sidebar">SIDEBAR</div>
-                <div key="mainInterface" className="main-interface">
-                    {display}
-                </div>
+                {display}
             </div>
         );
     }
