@@ -2,21 +2,34 @@ import React from 'react';
 import { MISC } from './misc';
 
 export class TEMPLATE {
+
+    
+
     static ticketItem(incomingData: {
         tid: string,
         title: string,
         time: number,
-        description: string
+        description: string,
+        username: string,
+        statusname: string
     }) {
         if (incomingData === null) return (<div>NULL</div>);
-        const { tid, title, time, description } = incomingData;
+        const { tid, title, time, description, username, statusname } = incomingData;
         return <div key={`ticket${tid}`} className="ticket-block">
                 <div key={`ticketHead${tid}`} className="ticket-head">
                     <div key={`ticketTitle${tid}`} className="ticket-title">
                         {title}
                     </div>
+                </div>
+                <div key={`ticketToolbar${tid}`} className="ticket-toolbar">
+                    <div key={`ticketAuthor${tid}`} className="ticket-author">
+                        Opened by: {username}
+                    </div>
                     <div key={`ticketTime${tid}`} className="ticket-timestamp">
-                        {MISC.convertRawTimeToDate(time)}
+                        Created: {MISC.convertRawTimeToDate(time)}
+                    </div>
+                    <div key={`ticketStatus${tid}`} className="ticket-status stat-${statusname}">
+                        Status: {statusname}
                     </div>
                 </div>
                 <div key={`ticketBody${tid}`} className="ticket-body">
