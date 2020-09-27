@@ -16,10 +16,10 @@ export class TEMPLATE {
     }) {
         if (incomingData === null) return (<div>NULL</div>);
         const { tid, title, time, description, username, statusname, statuscolor, priorityname, prioritycolor } = incomingData;
-        return <div key={`ticket${tid}`} className="ticket-block">
+        return <div key={`ticket${tid}`} className="ticket-block" id={`ticket-${tid}`}>
                 <div key={`ticketHead${tid}`} className="ticket-head">
                     <div key={`ticketTitle${tid}`} className="ticket-title">
-                        {title}
+                        #{tid} - {title}
                     </div>
                 </div>
                 <div key={`ticketToolbar${tid}`} className="ticket-toolbar">

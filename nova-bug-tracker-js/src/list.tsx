@@ -48,13 +48,30 @@ export class BugTrackerList extends React.Component<Props, State> {
     formatListItem(incomingData: string) {
         const imported = JSON.parse(incomingData);
         let output = [<React.Fragment />];
+
+        //get each of the ticket block, format them, and then save them in "output"
         for (var i = 0; i < imported.length; i ++) {
             const checkDelete = imported[i].status; //If status returns as -1, it is "deleted"
-            if (checkDelete !== -1 && imported[i].tid !== null) {
+            if (checkDelete !== -1
+            && this.isValidItem(JSON.stringify(imported[i]))) { 
                 output.push(TEMPLATE.ticketItem(imported[i]));
             }
         }
         return output;
+    }
+    
+    /** Make sure the API request from the database does not return as blank
+     * @param {string} checkData - Must be an object as tring (try JSON.stringfy)
+     * @returns {boolean}
+     */
+    isValidItem(checkData: string) {
+        const check = JSON.parse(checkData);
+        if (check.tid === null
+        || check.tid === ''
+        || check.title === '') {
+            return false;
+        }
+        return true;
     }
     //
 
