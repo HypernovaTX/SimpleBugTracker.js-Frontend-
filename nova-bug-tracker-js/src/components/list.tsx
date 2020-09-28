@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-import * as CONFIG from './config.json';
-import { TEMPLATE } from './lib/template';
+import * as CONFIG from '../config.json';
+import { TEMPLATE } from '../lib/template';
 
 type Props = { showDisplay: boolean };
 type State = {
@@ -76,7 +76,7 @@ export class TicketList extends React.Component<Props, State> {
      * @param {string} checkData - Must be an object as tring (try JSON.stringfy)
      * @returns {boolean}
      */
-    isValidItem(checkData: string) {
+    isValidItem(checkData: string): boolean {
         const check = JSON.parse(checkData);
         if (check.tid === null
         || check.tid === ''

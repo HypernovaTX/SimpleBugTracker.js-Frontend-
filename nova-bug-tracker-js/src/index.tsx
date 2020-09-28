@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 
-import { TicketList } from './list';
-import { Sidebar } from './sidebar';
+import { TicketList } from './components/list';
+import { Sidebar } from './components/sidebar';
 
 ReactDOM.render(
   <React.StrictMode>
