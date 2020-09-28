@@ -13,7 +13,7 @@ type State = {
     globalLoading: boolean //User for loading that covers the entire screen
 };
 
-export class BugTrackerList extends React.Component<Props, State> {
+export class TicketList extends React.Component<Props, State> {
     private API_Request: NodeJS.Timeout;
 
     constructor(p: Props) {
@@ -84,11 +84,8 @@ export class BugTrackerList extends React.Component<Props, State> {
         }
 
         return (
-            <div key="body" className="main-body">
-                <div key="sidebar" className="sidebar">SIDEBAR</div>
-                <div key="mainInterface" className="main-interface">
-                    {data}
-                </div>
+            <div key="mainInterface" className="main-interface">
+                {data}
             </div>
         );
     }
