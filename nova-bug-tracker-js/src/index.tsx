@@ -10,7 +10,9 @@ ReactDOM.render(
   <React.StrictMode>
     <div key="body" className="main-body">
       <Sidebar showDisplay={true}/>
-      <TicketList showDisplay={true}/>
+      <div key="mainInterface" className="main-interface">
+        <TicketList showDisplay={true}/>
+      </div>
     </div>
   </React.StrictMode>,
   document.getElementById('root')
