@@ -45,6 +45,7 @@ export class TicketList extends React.Component<Props, State> {
         }
     }
 
+    //MAIN API Request
     getData = () => {
         axios.post(CONFIG.api.source, {test: 123})
             .then((response) => {
@@ -70,6 +71,15 @@ export class TicketList extends React.Component<Props, State> {
             }
         }
         return output;
+    }
+
+    sortMenus() {
+        const sortItems = ['tid', 'date', 'priority', 'status'];
+        let sortTypeMenu = '';
+        sortItems.forEach(element => {
+            
+        });
+
     }
 
     /** Make sure the API request from the database does not return as blank
