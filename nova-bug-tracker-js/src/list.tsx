@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import * as CONFIG from './config.json';
 import { TEMPLATE } from './lib/template';
-import { type } from 'os';
+//import { type } from 'os';
 //import { ReactComponent } from '*.svg';
 
 type Props = { showDisplay: boolean };
@@ -38,7 +38,7 @@ export class BugTrackerList extends React.Component<Props, State> {
     }
 
     getData = () => {
-        axios.get(CONFIG.api.source)
+        axios.post(CONFIG.api.source, {test: 123})
             .then((response) => {
                 this.setState({ loading: false, listItems: JSON.stringify(response.data) });
                 this.formatListItem(JSON.stringify(response.data));
@@ -59,7 +59,7 @@ export class BugTrackerList extends React.Component<Props, State> {
         }
         return output;
     }
-    
+
     /** Make sure the API request from the database does not return as blank
      * @param {string} checkData - Must be an object as tring (try JSON.stringfy)
      * @returns {boolean}
@@ -73,24 +73,22 @@ export class BugTrackerList extends React.Component<Props, State> {
         }
         return true;
     }
-    //
 
     render() {
-        //this.getData();
-        let data = ([<div key="startLoad">Loading...</div>]);
+        let data = [<div key="loading">Loading...</div>];
+        if (!this.props.showDisplay) {
+            data = [<div key="na"></div>];
+        }
         if (this.state.loading === false) {
             data = this.formatListItem(this.state.listItems);
-        }
-        let display = <React.Fragment/>;
-
-        if (this.props.showDisplay) {
-            display = <div key="mainInterface" className="main-interface">{data}</div>;
         }
 
         return (
             <div key="body" className="main-body">
                 <div key="sidebar" className="sidebar">SIDEBAR</div>
-                {display}
+                <div key="mainInterface" className="main-interface">
+                    {data}
+                </div>
             </div>
         );
     }
