@@ -26,13 +26,19 @@ export class TicketList extends React.Component<Props, State> {
             sortItem: 'tid',
             sortDirection: true
         }
+
+        //Placeholder NodeJS.Timeout to prevent any errors
         this.API_Request = setInterval(() => {}, 9999999999);
+        clearInterval(this.API_Request);
     }
 
     componentDidMount() {
         clearInterval(this.API_Request);
+        //Initial API request
         this.getData();
-        this.API_Request = setInterval(() => this.getData(), 5000);
+
+        //Run API request every X amount of time (see "..\config.json" > General > refreshInterval)
+        this.API_Request = setInterval(() => this.getData(), CONFIG.general.refreshInterval);
     }
 
     componentWillUnmount() {
@@ -59,14 +65,17 @@ export class TicketList extends React.Component<Props, State> {
         });
     }
 
-    refreshSortingType = (event: any) => {
-        this.setState({ sortItem: event.target.value });
-        this.getData();
+    //Event driven when an option is selected in the sort by type menu
+    refreshSortingType = (event_i: any) => {
+        setTimeout(() => this.getData(), 50);
+        this.setState({ sortItem: event_i.target.value })
     }
 
-    refreshSortingDirection = (event: any) => {
-        this.setState({ sortDirection: event.target.value });
-        this.getData();
+    //Event driven when an option is selected in the sorting direction menu
+    refreshSortingDirection = (event_d: any) => {
+        setTimeout(() => this.getData(), 50);
+        const output = (event_d.target.value === 'Ascending' ? true : false);
+        this.setState({ sortDirection: output });
     }
 
     /** Format each of the ticket items as a block
@@ -88,21 +97,52 @@ export class TicketList extends React.Component<Props, State> {
         return output;
     }
 
-    sortMenus() {
+    sortMenuItem() {
+        //Values is used for the SQL query for the backend to understand, Names are what showing at the front
         const sortItemsValues = ['t.tid', 't.time', 't.priority', 't.status', 't.title'];
         const sortItemNames = ['Ticket ID', 'Creation Date', 'Priority', 'Status', 'Ticket Title'];
-        let sortTypeMenu = [<div key='placeholder'></div>]; //placeholder to prevent Typescript to freakout since I cannot define this as a type
+
+        //placeholder to prevent Typescript to freakout since I cannot define this as a type
+        let sortTypeHTML = [<div key='placeholder'></div>]; 
+
+        //Build all of the options
         sortItemsValues.forEach((item, index) => {
-            sortTypeMenu.push(<option key={`sortMenu_${item}`} value={item}>{sortItemNames[index]}</option>);
+            sortTypeHTML.push(<option key={`sortMenu_${item}`} value={item}>{sortItemNames[index]}</option>);
         });
-        sortTypeMenu.shift(); //remove the placeholder <div>
+
+        //remove the placeholder <div>
+        sortTypeHTML.shift(); 
         return <select
-                    key='sortMenu'
+                    key='sortMenuItem'
                     value={this.state.sortItem}
                     className='dropdown sort-menu-type'
                     onChange={this.refreshSortingType}
                 >
-                    {sortTypeMenu}
+                    {sortTypeHTML}
+                </select>;
+    }
+
+    sortMenuDirection() {
+        //Since I cannot put boolean in JSX element, I have to put these in there as a placeholder
+        const sortDirNames = ['Ascending', 'Descending']; 
+
+        //placeholder to prevent Typescript to freakout since I cannot define this as a type
+        let sortDirectHTML = [<div key='placeholder'></div>];
+
+        //Build all of the options
+        sortDirNames.forEach((item) => {
+            sortDirectHTML.push(<option key={`sortMenu_${item}`} value={item}>{item}</option>);
+        });
+
+        //remove the placeholder <div>
+        sortDirectHTML.shift(); 
+        return <select
+                    key='sortMenuDirection'
+                    value={(this.state.sortDirection === true ? 'Ascending' : 'Descending')}
+                    className='dropdown sort-menu-type'
+                    onChange={this.refreshSortingDirection}
+                >
+                    {sortDirectHTML}
                 </select>;
     }
 
@@ -131,7 +171,7 @@ export class TicketList extends React.Component<Props, State> {
 
         return (
             <div key="listBody" className="list-body">
-                <div key='sortSection' className='sortSection'>{this.sortMenus()}</div>
+                <div key='sortSection' className='sortSection'>Sort by: {this.sortMenuItem()} {this.sortMenuDirection()}</div>
                 {data}
             </div>
         );

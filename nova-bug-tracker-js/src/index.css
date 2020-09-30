@@ -85,3 +85,24 @@ code {
 .ticket-body {
   padding: 6px;
 }
+
+.sortSection {
+  margin: 8px 32px;
+  font-size: 0.8em;
+  color: #222;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+select.dropdown {
+  border: 0;
+  background-color: #444;
+  color: #FFF;
+  transition: 100ms linear all;
+  margin: 0 0 0 4px;
+  padding: 4px;
+  border-radius: 1.3em;
+}
+select.dropdown:hover {
+  background-color: #777;
+}

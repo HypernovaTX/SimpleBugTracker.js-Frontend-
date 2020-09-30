@@ -1,7 +1,7 @@
 {
     "general": {
         "timezone": -5,
-        "refreshInterval": 10000
+        "refreshInterval": 5000
     },
     "api": {
         "source": "http://localhost:8080/",
