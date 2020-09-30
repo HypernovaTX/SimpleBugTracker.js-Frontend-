@@ -9,8 +9,8 @@ type State = {
     filter: string[],       //Used for filtering the list
     loading: boolean,       //Used for loading that loads list
     globalLoading: boolean, //User for loading that covers the entire screen
-    sortKind: string,       //sort by type
-    sortDirection: string,  //sort direction
+    sortItem: string,       //sort by type
+    sortDirection: boolean,  //sort direction (true - ASC, false - DESC)
 };
 
 export class TicketList extends React.Component<Props, State> {
@@ -23,8 +23,8 @@ export class TicketList extends React.Component<Props, State> {
             filter: [],
             loading: true,
             globalLoading: true,
-            sortKind: 'tid',
-            sortDirection: 'ASC'
+            sortItem: 'tid',
+            sortDirection: true
         }
         this.API_Request = setInterval(() => {}, 9999999999);
     }
@@ -32,7 +32,7 @@ export class TicketList extends React.Component<Props, State> {
     componentDidMount() {
         clearInterval(this.API_Request);
         this.getData();
-        this.API_Request = setInterval(() => this.getData(), 10000);
+        this.API_Request = setInterval(() => this.getData(), 5000);
     }
 
     componentWillUnmount() {
@@ -47,18 +47,33 @@ export class TicketList extends React.Component<Props, State> {
 
     //MAIN API Request
     getData = () => {
-        axios.post(CONFIG.api.source, {test: 123})
-            .then((response) => {
-                this.setState({ loading: false, listItems: JSON.stringify(response.data) });
-                this.formatListItem(JSON.stringify(response.data));
-            });
+        const postData = {
+            sortDirection: [this.state.sortDirection],
+            sortItem: [this.state.sortItem]
+        }
+
+        axios.post(CONFIG.api.source, postData)
+        .then((response) => {
+            this.setState({ loading: false, listItems: JSON.stringify(response.data) });
+            this.formatListItem(JSON.stringify(response.data));
+        });
+    }
+
+    refreshSortingType = (event: any) => {
+        this.setState({ sortItem: event.target.value });
+        this.getData();
+    }
+
+    refreshSortingDirection = (event: any) => {
+        this.setState({ sortDirection: event.target.value });
+        this.getData();
     }
 
     /** Format each of the ticket items as a block
      * @param {string} incomingData - Must be an object as tring from the API request (try JSON.stringfy)
-     * @returns {Element[]}
+     * @returns {JSX.Element[]}
      */
-    formatListItem(incomingData: string) {
+    formatListItem(incomingData: string): JSX.Element[] {
         const imported = JSON.parse(incomingData);
         let output = [];
 
@@ -74,12 +89,21 @@ export class TicketList extends React.Component<Props, State> {
     }
 
     sortMenus() {
-        const sortItems = ['tid', 'date', 'priority', 'status'];
-        let sortTypeMenu = '';
-        sortItems.forEach(element => {
-            
+        const sortItemsValues = ['t.tid', 't.time', 't.priority', 't.status', 't.title'];
+        const sortItemNames = ['Ticket ID', 'Creation Date', 'Priority', 'Status', 'Ticket Title'];
+        let sortTypeMenu = [<div key='placeholder'></div>]; //placeholder to prevent Typescript to freakout since I cannot define this as a type
+        sortItemsValues.forEach((item, index) => {
+            sortTypeMenu.push(<option key={`sortMenu_${item}`} value={item}>{sortItemNames[index]}</option>);
         });
-
+        sortTypeMenu.shift(); //remove the placeholder <div>
+        return <select
+                    key='sortMenu'
+                    value={this.state.sortItem}
+                    className='dropdown sort-menu-type'
+                    onChange={this.refreshSortingType}
+                >
+                    {sortTypeMenu}
+                </select>;
     }
 
     /** Make sure the API request from the database does not return as blank
@@ -107,6 +131,7 @@ export class TicketList extends React.Component<Props, State> {
 
         return (
             <div key="listBody" className="list-body">
+                <div key='sortSection' className='sortSection'>{this.sortMenus()}</div>
                 {data}
             </div>
         );
