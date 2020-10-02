@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import * as CONFIG from '../config.json';
-import { TEMPLATE } from '../lib/template';
+import { Template } from '../lib/template';
 
 type Props = { showDisplay: boolean };
 type State = {
@@ -11,7 +11,7 @@ type State = {
     globalLoading: boolean, //User for loading that covers the entire screen
     sortItem: string,       //sort by type
     sortDirection: boolean, //sort direction (true - ASC, false - DESC)
-    popup: boolean           //Used for pop-up editor
+    popup: boolean          //Used for pop-up editor
 };
 
 export class TicketList extends React.Component<Props, State> {
@@ -84,54 +84,6 @@ export class TicketList extends React.Component<Props, State> {
 
     
 
-    sortMenuItem() {
-        //Values is used for the SQL query for the backend to understand, Names are what showing at the front
-        const sortItemsValues = ['t.tid', 't.time', 't.priority', 't.status', 't.title'];
-        const sortItemNames = ['Ticket ID', 'Creation Date', 'Priority', 'Status', 'Ticket Title'];
-
-        //placeholder to prevent Typescript to freakout since I cannot define this as a type
-        let sortTypeHTML = [<div key='placeholder'></div>]; 
-
-        //Build all of the options
-        sortItemsValues.forEach((item, index) => {
-            sortTypeHTML.push(<option key={`sortMenu_${item}`} value={item}>{sortItemNames[index]}</option>);
-        });
-
-        //remove the placeholder <div>
-        sortTypeHTML.shift(); 
-        return <select
-                    key='sortMenuItem'
-                    value={this.state.sortItem}
-                    className='dropdown sort-menu-type'
-                    onChange={this.refreshSortingType}
-                >
-                    {sortTypeHTML}
-                </select>;
-    }
-
-    sortMenuDirection() {
-        //Since I cannot put boolean in JSX element, I have to put these in there as a placeholder
-        const sortDirNames = ['Ascending', 'Descending']; 
-
-        //placeholder to prevent Typescript to freakout since I cannot define this as a type
-        let sortDirectHTML = [<div key='placeholder'></div>];
-
-        //Build all of the options
-        sortDirNames.forEach((item) => {
-            sortDirectHTML.push(<option key={`sortMenu_${item}`} value={item}>{item}</option>);
-        });
-
-        //remove the placeholder <div>
-        sortDirectHTML.shift(); 
-        return <select
-                    key='sortMenuDirection'
-                    value={(this.state.sortDirection === true ? 'Ascending' : 'Descending')}
-                    className='dropdown sort-menu-type'
-                    onChange={this.refreshSortingDirection}
-                >
-                    {sortDirectHTML}
-                </select>;
-    }
 
     /** Make sure the API request from the database does not return as blank
      * @param {string} checkData - Must be an object as tring (try JSON.stringfy)
@@ -168,7 +120,7 @@ export class TicketList extends React.Component<Props, State> {
             const checkDelete = imported[i].status; //If status returns as -1, it is "deleted"
             if (checkDelete !== -1
             && this.isValidItem(JSON.stringify(imported[i]))) {
-                output.push(<TEMPLATE
+                output.push(<Template
                     template_type = 'list_item'
                     tid={imported[i].tid}
                     title={imported[i].title}
@@ -189,8 +141,57 @@ export class TicketList extends React.Component<Props, State> {
         return (<div key='addTicketButton' className='add-ticket-button' onClick={() => this.showTicketWindow()}>Add Ticket</div>);
     }
 
-    formatTicketAudioWindow(): JSX.Element {
+    formatTicketAuditWindow(): JSX.Element {
         return (<div>PLACEHOLDER</div>);
+    }
+
+    formatSortMenuItem() {
+        //Values is used for the SQL query for the backend to understand, Names are what showing at the front
+        const sortItemsValues = ['t.tid', 't.time', 't.priority', 't.status', 't.title'];
+        const sortItemNames = ['Ticket ID', 'Creation Date', 'Priority', 'Status', 'Ticket Title'];
+
+        //placeholder to prevent Typescript to freakout since I cannot define this as a type
+        let sortTypeHTML = [<div key='placeholder'></div>]; 
+
+        //Build all of the options
+        sortItemsValues.forEach((item, index) => {
+            sortTypeHTML.push(<option key={`sortMenu_${item}`} value={item}>{sortItemNames[index]}</option>);
+        });
+
+        //remove the placeholder <div>
+        sortTypeHTML.shift(); 
+        return <select
+                    key='sortMenuItem'
+                    value={this.state.sortItem}
+                    className='dropdown sort-menu-type'
+                    onChange={this.refreshSortingType}
+                >
+                    {sortTypeHTML}
+                </select>;
+    }
+
+    formatSortMenuDirection() {
+        //Since I cannot put boolean in JSX element, I have to put these in there as a placeholder
+        const sortDirNames = ['Ascending', 'Descending']; 
+
+        //placeholder to prevent Typescript to freakout since I cannot define this as a type
+        let sortDirectHTML = [<div key='placeholder'></div>];
+
+        //Build all of the options
+        sortDirNames.forEach((item) => {
+            sortDirectHTML.push(<option key={`sortMenu_${item}`} value={item}>{item}</option>);
+        });
+
+        //remove the placeholder <div>
+        sortDirectHTML.shift(); 
+        return <select
+                    key='sortMenuDirection'
+                    value={(this.state.sortDirection === true ? 'Ascending' : 'Descending')}
+                    className='dropdown sort-menu-type'
+                    onChange={this.refreshSortingDirection}
+                >
+                    {sortDirectHTML}
+                </select>;
     }
 
     render() {
@@ -210,7 +211,7 @@ export class TicketList extends React.Component<Props, State> {
             <div key='listBody' className='list-body'>
                 {popupContainer}
                 <div key='listTopBar' className='list-head-bar'>
-                    <div key='sortSection' className='sortSection'>Sort by: {this.sortMenuItem()} {this.sortMenuDirection()}</div>
+                    <div key='sortSection' className='sortSection'>Sort by: {this.formatSortMenuItem()} {this.formatSortMenuDirection()}</div>
                     {this.formatTicketButton()}
                 </div>
                 {data}

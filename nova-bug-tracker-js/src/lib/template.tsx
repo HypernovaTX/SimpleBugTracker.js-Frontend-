@@ -1,5 +1,7 @@
 import React from 'react';
+import axios from 'axios';
 import { MISC } from './misc';
+import * as CONFIG from '../config.json';
 
 /* HOW TO USE TEMPLATE
  * 
@@ -19,10 +21,38 @@ type Props = {
     function?: () => {}
 }
 
-export class TEMPLATE extends React.Component<Props> {
+type State = {
+    listPriority: string,   //List of priorities from the database (as objects as per item and list as arrays)
+    listStatus: string      //List of priorities from the database (same like listPriority)
+}
+
+export class Template extends React.Component<Props> {
 
     constructor(p: Props) {
         super(p);
+        this.state = {
+            listPriority: '',
+            listStatus: '',
+            loading: true
+        };
+    }
+
+    //Get the list of statuses from the databse
+    getListStatus = () => {
+        const postData = { table: 'status' }
+        axios.post(`${CONFIG.api.source}/quickquery`, postData)
+        .then((response) => {
+            this.setState({ listStatus: JSON.stringify(response.data) });
+        });
+    }
+
+    //Get the list of priorities from the databse
+    getListPriority = () => {
+        const postData = { table: 'priority' }
+        axios.post(`${CONFIG.api.source}/quickquery`, postData)
+        .then((response) => {
+            this.setState({ listPriority: JSON.stringify(response.data) });
+        });
     }
 
     ticketItem(): JSX.Element {
@@ -69,6 +99,10 @@ export class TEMPLATE extends React.Component<Props> {
 
     auditTicketWindow() {
         const { title } = this.props;
+        this.getListStatus();
+        this.getListPriority();
+
+
         return (<div key='popupWindow' className='popup-window'>
         <form key='audit-ticket' method='POST'>
             <table key='popupWindowFormTable'>
@@ -76,7 +110,10 @@ export class TEMPLATE extends React.Component<Props> {
                     <td>Title</td>
                     <td><input type='text' value={( title || '' )}></input></td>
                 </tr>
-
+                <tr>
+                    <td>Status</td>
+                    <td></td>
+                </tr>
             </table>
         </form>
     </div>)
