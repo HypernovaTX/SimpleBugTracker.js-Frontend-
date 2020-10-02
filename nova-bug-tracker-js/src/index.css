@@ -34,12 +34,17 @@ code {
   background: rgba(0, 0, 0, 0.2);
 }
 
+.list-head-bar {
+  margin: 8px 0;
+  justify-content: space-between;
+  display: flex;
+}
+
 .ticket-block {
-  margin: 16px 32px;
+  margin: 0px 32px 24px 32px;
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
 }
-
 .ticket-head {
   padding: 6px;
   border-bottom: 1px solid #CCC;
@@ -50,7 +55,6 @@ code {
   font-size: 1.05em;
   font-weight: 600;
 }
-
 .ticket-toolbar {
   padding: 6px;
   border-bottom: 1px solid #CCC;
@@ -86,14 +90,18 @@ code {
   padding: 6px;
 }
 
-.sortSection {
+.sort-section {
   margin: 8px 32px;
   font-size: 0.8em;
   color: #222;
   text-transform: uppercase;
   font-weight: 700;
+  display: inline-table;
 }
-
+.add-ticket-button-section {
+  display: inline-table;
+  margin: 8px 32px;
+}
 select.dropdown {
   border: 0;
   background-color: #444;
@@ -105,6 +113,30 @@ select.dropdown {
 }
 select.dropdown:hover {
   background-color: #777;
+}
+select.dropdown:active {
+  background-color: #999;
+}
+
+.add-ticket-button {
+  padding: 4px 12px 7px;
+
+  color: #FFF;
+  font-size: 0.8em;
+  font-weight: 500;
+  
+  border: 0;
+  background-color: #ff3c16;
+  border-radius: 1.3em;
+  
+  user-select: none;
+  transition: 100ms linear all;
+}
+.add-ticket-button:hover {
+  background-color: #ff6749;
+}
+.add-ticket-button:active {
+  background-color: #ffa391;
 }
 
 .popup-shadow {
@@ -118,4 +150,26 @@ select.dropdown:hover {
   top: 0;
   left: 0;
   transition: opacity 500ms;
+  backdrop-filter: blur(10px);
+}
+.popup-close-button {
+  background: rgb(255, 52, 52);
+  display: inline;
+  position: fixed;
+  top: 8px;
+  right: 27px;
+  padding: 0 6px 2px 6px;
+  font-weight: 900;
+  color: #FFF;
+  border: 2px solid #FFF;
+  border-radius: 50%;
+  box-shadow: 2px 2px 4px #000;
+  user-select: none;
+  transition: background 200ms;
+}
+.popup-close-button:hover {
+  background: rgb(255, 120, 120);
+}
+.popup-close-button:active {
+  background: rgb(175, 19, 19);
 }

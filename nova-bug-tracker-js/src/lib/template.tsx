@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { MISC } from './misc';
+import { Misc } from './misc';
 import * as CONFIG from '../config.json';
 
 /* HOW TO USE TEMPLATE
@@ -26,17 +26,17 @@ type State = {
     listStatus: string      //List of priorities from the database (same like listPriority)
 }
 
-export class Template extends React.Component<Props> {
+export class Template extends React.Component<Props, State> {
 
     constructor(p: Props) {
         super(p);
         this.state = {
             listPriority: '',
-            listStatus: '',
-            loading: true
+            listStatus: ''
         };
     }
 
+    //======== Functions and Async stuffs ========
     //Get the list of statuses from the databse
     getListStatus = () => {
         const postData = { table: 'status' }
@@ -55,8 +55,11 @@ export class Template extends React.Component<Props> {
         });
     }
 
+    //======== Begin Templates ========
+    //This renders a block for a single ticket
     ticketItem(): JSX.Element {
         const { tid, title, time, description, username, statusname, statuscolor, priorityname, prioritycolor } = this.props;
+        
         return <div key={`ticket${tid}`} className="ticket-block" id={`ticket-${tid}`}>
                 <div key={`ticketHead${tid}`} className="ticket-head">
                     <div key={`ticketTitle${tid}`} className="ticket-title">
@@ -68,7 +71,7 @@ export class Template extends React.Component<Props> {
                         Created by: {username}
                     </div>
                     <div key={`ticketTime${tid}`} className="ticket-timestamp">
-                        Created: {MISC.convertRawTimeToDate(time)}
+                        Created: {Misc.convertRawTimeToDate(time)}
                     </div>
                     <div key={`ticketStatus${tid}`} className="ticket-status">
                         Status: 
@@ -97,11 +100,17 @@ export class Template extends React.Component<Props> {
             </div>;
     }
 
+    //This is the editing window when you creating/editing a ticket
     auditTicketWindow() {
         const { title } = this.props;
+        const { listPriority, listStatus } = this.state;
         this.getListStatus();
         this.getListPriority();
 
+        let status = [{ name: '...', stid: 0 }];
+        let priority = [{ name: '...', prid: 0 }];
+        if (listPriority !== '') { status = JSON.parse(listPriority); }
+        if (listStatus !== '') { status = JSON.parse(listStatus); }
 
         return (<div key='popupWindow' className='popup-window'>
         <form key='audit-ticket' method='POST'>
@@ -119,6 +128,29 @@ export class Template extends React.Component<Props> {
     </div>)
     }
 
+    //Make status box for ticket editor
+    dropdownMenuStatus() {
+        const data = JSON.parse(this.state.listStatus); 
+        let entry = [<div key='placeholder_TS'></div>];
+        data.forEach((eachObject: { stid: number, name: string}, index: any) => {
+            entry.push(<option key={`auditItemStatus_${index}`} value={eachObject.stid}>{eachObject.name}</option>);
+        });
+        entry.shift();
+        return entry;
+    }
+
+    //Make priority box for ticket editor
+    dropdownMenuPriority() {
+        const data = JSON.parse(this.state.listPriority); 
+        let entry = [<div key='placeholder_TP'></div>];
+        data.forEach((eachObject: { prid: number, name: string}, index: any) => {
+            entry.push(<option key={`auditItemPriority_${index}`} value={eachObject.prid}>{eachObject.name}</option>);
+        });
+        entry.shift();
+        return entry;
+    }
+
+    //Render the stuffs
     render() {
         let templateData = <div key='templatetemp'></div>;
         switch (this.props.template_type) {

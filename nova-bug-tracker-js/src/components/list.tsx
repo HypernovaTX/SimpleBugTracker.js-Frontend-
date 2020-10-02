@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import * as CONFIG from '../config.json';
 import { Template } from '../lib/template';
+import { Misc } from '../lib/misc';
 
 type Props = { showDisplay: boolean };
 type State = {
@@ -85,25 +86,30 @@ export class TicketList extends React.Component<Props, State> {
     
 
 
-    /** Make sure the API request from the database does not return as blank
-     * @param {string} checkData - Must be an object as tring (try JSON.stringfy)
-     * @returns {boolean}
-     */
-    isValidItem(checkData: string): boolean {
-        const check = JSON.parse(checkData);
-        if (check.tid === null
-        || check.tid === ''
-        || check.title === '') {
-            return false;
-        }
-        return true;
-    }
+    
 
     showTicketWindow(): void {
         if (this.state.popup === false) {
             this.setState({ popup: true });
-            document.body.style.overflow = 'hidden';
-            setTimeout(() => { this.popupAlpha = 1 }, 5);
+            document.body.style.position = 'fixed';
+            document.body.style.overflowY = 'scroll';
+            this.popupAlpha = 0;
+            setTimeout(() => {
+                this.popupAlpha = 1;
+                this.forceUpdate();
+            }, 10);
+        }
+    }
+
+    closeTicketWindow(): void {
+        if (this.state.popup === true) {
+            this.popupAlpha = 0;
+            this.forceUpdate();
+            setTimeout(() => {
+                document.body.style.position = 'static';
+                document.body.style.overflowY = 'auto';
+                this.setState({ popup: false });
+            }, 250);
         }
     }
 
@@ -119,7 +125,7 @@ export class TicketList extends React.Component<Props, State> {
         for (var i = 0; i < imported.length; i ++) {
             const checkDelete = imported[i].status; //If status returns as -1, it is "deleted"
             if (checkDelete !== -1
-            && this.isValidItem(JSON.stringify(imported[i]))) {
+            && Misc.isValidItem(JSON.stringify(imported[i]))) {
                 output.push(<Template
                     template_type = 'list_item'
                     tid={imported[i].tid}
@@ -197,23 +203,34 @@ export class TicketList extends React.Component<Props, State> {
     render() {
         let data = [<div key='na'>N/A</div>];
         let popupContainer = <div key='popupFake'></div>;
+
+        //list all of the tickets
         if (this.state.loading === false && this.props.showDisplay) {
             data = this.formatListItem(this.state.listItems);
         }
+
+        //used for the popup overlay
         if (this.state.popup === true) {
             const popupStyle = { opacity: this.popupAlpha };
             popupContainer = <div key='popupShadow' className='popup-shadow' style={popupStyle}>
-                
+                <div key='popUpClose' className='popup-close-button' onClick={() => this.closeTicketWindow()}>X</div>
             </div>
         }
+
+        //Options bar on top of the ticket lists
+        const topbar = <div key='listTopBar' className='list-head-bar'>
+            <div key='sortSection' className='sort-section'>
+                Sort by: {this.formatSortMenuItem()} {this.formatSortMenuDirection()}
+            </div>
+            <div key='addTicketButtonSection' className='add-ticket-button-section'>
+                {this.formatTicketButton()}
+            </div>
+        </div>;
 
         return (
             <div key='listBody' className='list-body'>
                 {popupContainer}
-                <div key='listTopBar' className='list-head-bar'>
-                    <div key='sortSection' className='sortSection'>Sort by: {this.formatSortMenuItem()} {this.formatSortMenuDirection()}</div>
-                    {this.formatTicketButton()}
-                </div>
+                {topbar}
                 {data}
             </div>
         );
