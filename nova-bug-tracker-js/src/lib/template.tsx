@@ -102,7 +102,7 @@ export class Template extends React.Component<Props, State> {
 
     //This is the editing window when you creating/editing a ticket
     auditTicketWindow() {
-        const { title } = this.props;
+        const { title, statusname } = this.props;
         const { listPriority, listStatus } = this.state;
         this.getListStatus();
         this.getListPriority();
@@ -117,11 +117,20 @@ export class Template extends React.Component<Props, State> {
             <table key='popupWindowFormTable'>
                 <tr>
                     <td>Title</td>
-                    <td><input type='text' value={( title || '' )}></input></td>
+                    <td><input type='text' value={( title || '' )} ></input></td>
                 </tr>
                 <tr>
                     <td>Status</td>
-                    <td></td>
+                    <td>
+                        <select
+                        key='sortMenuItem'
+                        value={statusname}
+                        className='dropdown edit-menu-status'
+                        onChange={() => this.setState({ })}
+                        >
+
+                        </select>
+                    </td>
                 </tr>
             </table>
         </form>
