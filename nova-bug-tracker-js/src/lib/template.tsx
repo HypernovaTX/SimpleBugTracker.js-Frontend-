@@ -1,21 +1,32 @@
 import React from 'react';
 import { MISC } from './misc';
 
-export class TEMPLATE {
+/* HOW TO USE TEMPLATE
+ * 
+ */
 
-    static ticketItem(incomingData: {
-        tid: string,
-        title: string,
-        time: number,
-        description: string,
-        username: string,
-        statusname: string,
-        statuscolor: string,
-        priorityname: string,
-        prioritycolor: string
-    }) {
-        if (incomingData === null) return (<div>NULL</div>);
-        const { tid, title, time, description, username, statusname, statuscolor, priorityname, prioritycolor } = incomingData;
+type Props = {
+    template_type: string,
+    tid?: string,
+    title?: string,
+    time?: number,
+    description?: string,
+    username?: string,
+    statusname?: string,
+    statuscolor?: string,
+    priorityname?: string,
+    prioritycolor?: string,
+    function?: () => {}
+}
+
+export class TEMPLATE extends React.Component<Props> {
+
+    constructor(p: Props) {
+        super(p);
+    }
+
+    ticketItem(): JSX.Element {
+        const { tid, title, time, description, username, statusname, statuscolor, priorityname, prioritycolor } = this.props;
         return <div key={`ticket${tid}`} className="ticket-block" id={`ticket-${tid}`}>
                 <div key={`ticketHead${tid}`} className="ticket-head">
                     <div key={`ticketTitle${tid}`} className="ticket-title">
@@ -56,24 +67,32 @@ export class TEMPLATE {
             </div>;
     }
 
-    static auditTicketWindow(incomingData: {
-        title: '',
-        description: '',
-        status: 1,
-        statusname: '',
-        priority: 1,
-        priorityname: ''
-    }, action = () => {}) {
+    auditTicketWindow() {
+        const { title } = this.props;
         return (<div key='popupWindow' className='popup-window'>
         <form key='audit-ticket' method='POST'>
             <table key='popupWindowFormTable'>
                 <tr>
                     <td>Title</td>
-                    <td><input type='text' ></input></td>
+                    <td><input type='text' value={( title || '' )}></input></td>
                 </tr>
 
             </table>
         </form>
     </div>)
+    }
+
+    render() {
+        let templateData = <div key='templatetemp'></div>;
+        switch (this.props.template_type) {
+            case ('list_item'): templateData = this.ticketItem(); break;
+            case ('audit'): templateData = this.auditTicketWindow(); break;
+        }
+
+        return (
+            <div key='templateContainer'>
+                {templateData}
+            </div>
+        );
     }
 }

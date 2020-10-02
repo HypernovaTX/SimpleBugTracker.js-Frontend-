@@ -167,8 +167,19 @@ export class TicketList extends React.Component<Props, State> {
         for (var i = 0; i < imported.length; i ++) {
             const checkDelete = imported[i].status; //If status returns as -1, it is "deleted"
             if (checkDelete !== -1
-            && this.isValidItem(JSON.stringify(imported[i]))) { 
-                output.push(TEMPLATE.ticketItem(imported[i]));
+            && this.isValidItem(JSON.stringify(imported[i]))) {
+                output.push(<TEMPLATE
+                    template_type = 'list_item'
+                    tid={imported[i].tid}
+                    title={imported[i].title}
+                    time={imported[i].time}
+                    description={imported[i].description}
+                    username={imported[i].username}
+                    statusname={imported[i].statusname}
+                    statuscolor={imported[i].statuscolor}
+                    priorityname={imported[i].priorityname}
+                    prioritycolor={imported[i].prioritycolor}
+                />);
             }
         }
         return output;
@@ -179,16 +190,13 @@ export class TicketList extends React.Component<Props, State> {
     }
 
     formatTicketAudioWindow(): JSX.Element {
-        return ();
+        return (<div>PLACEHOLDER</div>);
     }
 
     render() {
-        let data = [<div key='loading'>Loading...</div>];
+        let data = [<div key='na'>N/A</div>];
         let popupContainer = <div key='popupFake'></div>;
-        if (!this.props.showDisplay) {
-            data = [<div key='na'></div>];
-        }
-        if (this.state.loading === false) {
+        if (this.state.loading === false && this.props.showDisplay) {
             data = this.formatListItem(this.state.listItems);
         }
         if (this.state.popup === true) {
