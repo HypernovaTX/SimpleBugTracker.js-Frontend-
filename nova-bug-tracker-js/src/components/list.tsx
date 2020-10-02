@@ -10,11 +10,13 @@ type State = {
     loading: boolean,       //Used for loading that loads list
     globalLoading: boolean, //User for loading that covers the entire screen
     sortItem: string,       //sort by type
-    sortDirection: boolean,  //sort direction (true - ASC, false - DESC)
+    sortDirection: boolean, //sort direction (true - ASC, false - DESC)
+    popup: boolean           //Used for pop-up editor
 };
 
 export class TicketList extends React.Component<Props, State> {
     private API_Request: NodeJS.Timeout;
+    private popupAlpha: number;
 
     constructor(p: Props) {
         super(p);
@@ -24,11 +26,13 @@ export class TicketList extends React.Component<Props, State> {
             loading: true,
             globalLoading: true,
             sortItem: 'tid',
-            sortDirection: true
+            sortDirection: true,
+            popup: false
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
         this.API_Request = setInterval(() => {}, 9999999999);
+        this.popupAlpha = 0;
         clearInterval(this.API_Request);
     }
 
@@ -78,24 +82,7 @@ export class TicketList extends React.Component<Props, State> {
         this.setState({ sortDirection: output });
     }
 
-    /** Format each of the ticket items as a block
-     * @param {string} incomingData - Must be an object as tring from the API request (try JSON.stringfy)
-     * @returns {JSX.Element[]}
-     */
-    formatListItem(incomingData: string): JSX.Element[] {
-        const imported = JSON.parse(incomingData);
-        let output = [];
-
-        //get each of the ticket block, format them, and then save them in "output"
-        for (var i = 0; i < imported.length; i ++) {
-            const checkDelete = imported[i].status; //If status returns as -1, it is "deleted"
-            if (checkDelete !== -1
-            && this.isValidItem(JSON.stringify(imported[i]))) { 
-                output.push(TEMPLATE.ticketItem(imported[i]));
-            }
-        }
-        return output;
-    }
+    
 
     sortMenuItem() {
         //Values is used for the SQL query for the backend to understand, Names are what showing at the front
@@ -160,18 +147,64 @@ export class TicketList extends React.Component<Props, State> {
         return true;
     }
 
+    showTicketWindow(): void {
+        if (this.state.popup === false) {
+            this.setState({ popup: true });
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => { this.popupAlpha = 1 }, 5);
+        }
+    }
+
+    /** Format each of the ticket items as a block
+     * @param {string} incomingData - Must be an object as tring from the API request (try JSON.stringfy)
+     * @returns {JSX.Element[]}
+     */
+    formatListItem(incomingData: string): JSX.Element[] {
+        const imported = JSON.parse(incomingData);
+        let output = [];
+
+        //get each of the ticket block, format them, and then save them in "output"
+        for (var i = 0; i < imported.length; i ++) {
+            const checkDelete = imported[i].status; //If status returns as -1, it is "deleted"
+            if (checkDelete !== -1
+            && this.isValidItem(JSON.stringify(imported[i]))) { 
+                output.push(TEMPLATE.ticketItem(imported[i]));
+            }
+        }
+        return output;
+    }
+
+    formatTicketButton(): JSX.Element {
+        return (<div key='addTicketButton' className='add-ticket-button' onClick={() => this.showTicketWindow()}>Add Ticket</div>);
+    }
+
+    formatTicketAudioWindow(): JSX.Element {
+        return ();
+    }
+
     render() {
-        let data = [<div key="loading">Loading...</div>];
+        let data = [<div key='loading'>Loading...</div>];
+        let popupContainer = <div key='popupFake'></div>;
         if (!this.props.showDisplay) {
-            data = [<div key="na"></div>];
+            data = [<div key='na'></div>];
         }
         if (this.state.loading === false) {
             data = this.formatListItem(this.state.listItems);
         }
+        if (this.state.popup === true) {
+            const popupStyle = { opacity: this.popupAlpha };
+            popupContainer = <div key='popupShadow' className='popup-shadow' style={popupStyle}>
+                
+            </div>
+        }
 
         return (
-            <div key="listBody" className="list-body">
-                <div key='sortSection' className='sortSection'>Sort by: {this.sortMenuItem()} {this.sortMenuDirection()}</div>
+            <div key='listBody' className='list-body'>
+                {popupContainer}
+                <div key='listTopBar' className='list-head-bar'>
+                    <div key='sortSection' className='sortSection'>Sort by: {this.sortMenuItem()} {this.sortMenuDirection()}</div>
+                    {this.formatTicketButton()}
+                </div>
                 {data}
             </div>
         );

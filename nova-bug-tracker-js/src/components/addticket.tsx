@@ -5,12 +5,14 @@ import React from 'react';
 //import { type } from 'os';
 //import { ReactComponent } from '*.svg';
 
-type Props = { showDisplay: boolean };
+type Props = {
+    showDisplay: boolean
+};
 type State = {
     item: string
 };
 
-export class Addticket extends React.Component<Props, State> {
+export class AuditTicket extends React.Component<Props, State> {
 
     constructor(p: Props) {
         super(p);

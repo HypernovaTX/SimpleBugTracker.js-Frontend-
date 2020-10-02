@@ -55,4 +55,25 @@ export class TEMPLATE {
                 </div>
             </div>;
     }
+
+    static auditTicketWindow(incomingData: {
+        title: '',
+        description: '',
+        status: 1,
+        statusname: '',
+        priority: 1,
+        priorityname: ''
+    }, action = () => {}) {
+        return (<div key='popupWindow' className='popup-window'>
+        <form key='audit-ticket' method='POST'>
+            <table key='popupWindowFormTable'>
+                <tr>
+                    <td>Title</td>
+                    <td><input type='text' ></input></td>
+                </tr>
+
+            </table>
+        </form>
+    </div>)
+    }
 }
