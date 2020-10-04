@@ -20,6 +20,7 @@ type Props = {
     priority?: number, 
     priorityname?: string,
     prioritycolor?: string,
+    disable?: boolean,
     function?: () => {}
 }
 
@@ -160,6 +161,7 @@ export class Template extends React.Component<Props, State> {
                             type = 'text'
                             value = {title}
                             onChange = {this.updateTitle}
+                            disabled = {this.props.disable || false }
                         ></input>
                     </td>
                 </tr>
@@ -171,6 +173,7 @@ export class Template extends React.Component<Props, State> {
                             value={status}
                             className='dropdown edit-menu-status'
                             onChange={this.updateStatusMenu}
+                            disabled = {this.props.disable || false }
                         >
                             {formattedStatus}
                         </select>
@@ -184,6 +187,7 @@ export class Template extends React.Component<Props, State> {
                             value = {priority}
                             className = 'dropdown edit-menu-priority'
                             onChange = {this.updatePriorityMenu}
+                            disabled = {this.props.disable || false }
                         >
                             {formattedPriority}
                         </select>
@@ -198,6 +202,7 @@ export class Template extends React.Component<Props, State> {
                             onChange = {this.updateDescription}
                             rows = {8}
                             cols = {48}
+                            disabled = {this.props.disable || false }
                         ></textarea>
                     </td>
                 </tr>

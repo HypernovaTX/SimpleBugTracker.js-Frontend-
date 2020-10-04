@@ -183,4 +183,5 @@ select.dropdown:active {
   padding: 8px 16px;
   border-radius: 12px;
   box-shadow: 8px 8px 12px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0 16px #FFF;
 }

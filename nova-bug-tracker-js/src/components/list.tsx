@@ -108,11 +108,11 @@ export class TicketList extends React.Component<Props, State> {
         if (this.state.popup === true) {
             this.popupAlpha = 0;
             this.forceUpdate();
+            document.body.style.position = 'static';
+            document.body.style.overflowY = 'auto';
             setTimeout(() => {
-                document.body.style.position = 'static';
-                document.body.style.overflowY = 'auto';
                 this.setState({ popup: false });
-            }, 250);
+            }, 500);
         }
     }
 
@@ -154,6 +154,8 @@ export class TicketList extends React.Component<Props, State> {
 
     formatTicketAuditWindow(): JSX.Element {
         const { title, description, status, priority } = this.popupItems;
+        let disable = false;
+        if (this.popupAlpha === 0) { disable = true; }
         return (<Template
             key = 'popupWindowBody'
             template_type = 'audit'
@@ -161,6 +163,7 @@ export class TicketList extends React.Component<Props, State> {
             description = {description}
             status = {status}
             priority = {priority}
+            disable = {disable}
         />);
     }
 
