@@ -156,16 +156,17 @@ select.dropdown:active {
   background: rgb(255, 52, 52);
   display: inline;
   position: fixed;
-  top: 8px;
-  right: 27px;
-  padding: 0 6px 2px 6px;
-  font-weight: 900;
+  top: 14px;
+  right: 58px;
+  padding: 0 8px 3px 8px;
+  font-weight: 500;
   color: #FFF;
   border: 2px solid #FFF;
-  border-radius: 50%;
+  border-radius: 1em;
   box-shadow: 2px 2px 4px #000;
   user-select: none;
   transition: background 200ms;
+  text-transform: uppercase;
 }
 .popup-close-button:hover {
   background: rgb(255, 120, 120);

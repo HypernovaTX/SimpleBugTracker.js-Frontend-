@@ -213,7 +213,7 @@ export class TicketList extends React.Component<Props, State> {
         if (this.state.popup === true) {
             const popupStyle = { opacity: this.popupAlpha };
             popupContainer = <div key='popupShadow' className='popup-shadow' style={popupStyle}>
-                <div key='popUpClose' className='popup-close-button' onClick={() => this.closeTicketWindow()}>X</div>
+                <div key='popUpClose' className='popup-close-button' onClick={() => this.closeTicketWindow()}>close</div>
             </div>
         }
 
