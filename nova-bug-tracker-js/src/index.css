@@ -6,28 +6,27 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+td {
+  vertical-align: top;
 }
 
 .main-body {
   width: 100%;
   height: 100vh;
 }
-
 .sidebar, .main-interface {
   display: table-cell;
 }
-
 .sidebar {
   width: 25%;
   height: 100vh;
   background: rgba(0, 0, 0, 0.3);
   color: #FFF;
 }
-
 .main-interface {
   width: 75%;
   height: 100vh;
@@ -39,7 +38,6 @@ code {
   justify-content: space-between;
   display: flex;
 }
-
 .ticket-block {
   margin: 0px 32px 24px 32px;
   background: rgba(255, 255, 255, 0.9);
@@ -173,4 +171,16 @@ select.dropdown:active {
 }
 .popup-close-button:active {
   background: rgb(175, 19, 19);
+}
+.popup-shadow .template-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+.popup-window {
+  background-color: rgba(255, 255, 255, 0.5);
+  margin: auto;
+  padding: 8px 16px;
+  border-radius: 12px;
+  box-shadow: 8px 8px 12px rgba(0, 0, 0, 0.4);
 }

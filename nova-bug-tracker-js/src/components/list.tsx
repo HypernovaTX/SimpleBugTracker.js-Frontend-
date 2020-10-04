@@ -12,12 +12,18 @@ type State = {
     globalLoading: boolean, //User for loading that covers the entire screen
     sortItem: string,       //sort by type
     sortDirection: boolean, //sort direction (true - ASC, false - DESC)
-    popup: boolean          //Used for pop-up editor
+    popup: boolean,         //Used for pop-up editor
 };
 
 export class TicketList extends React.Component<Props, State> {
-    private API_Request: NodeJS.Timeout;
-    private popupAlpha: number;
+    private API_Request: NodeJS.Timeout;    //Used for making calls to the backend for list of tickets
+    private popupAlpha: number;             //Popup window visibility
+    private popupItems = {          //Used for options in the popup window
+        title: '',
+        description: '',
+        status: 1,
+        priority: 5
+    };
 
     constructor(p: Props) {
         super(p);
@@ -85,9 +91,6 @@ export class TicketList extends React.Component<Props, State> {
 
     
 
-
-    
-
     showTicketWindow(): void {
         if (this.state.popup === false) {
             this.setState({ popup: true });
@@ -125,18 +128,20 @@ export class TicketList extends React.Component<Props, State> {
         for (var i = 0; i < imported.length; i ++) {
             const checkDelete = imported[i].status; //If status returns as -1, it is "deleted"
             if (checkDelete !== -1
-            && Misc.isValidItem(JSON.stringify(imported[i]))) {
+            && Misc.isValidTicketItem(JSON.stringify(imported[i]))) {
+                const { tid, title, time, description, username, statusname, statuscolor, priorityname, prioritycolor } = imported[i];
                 output.push(<Template
+                    key = {`list_item${i}`}
                     template_type = 'list_item'
-                    tid={imported[i].tid}
-                    title={imported[i].title}
-                    time={imported[i].time}
-                    description={imported[i].description}
-                    username={imported[i].username}
-                    statusname={imported[i].statusname}
-                    statuscolor={imported[i].statuscolor}
-                    priorityname={imported[i].priorityname}
-                    prioritycolor={imported[i].prioritycolor}
+                    tid = {tid}
+                    title = {title}
+                    time = {time}
+                    description = {description}
+                    username = {username}
+                    statusname = {statusname}
+                    statuscolor = {statuscolor}
+                    priorityname = {priorityname}
+                    prioritycolor = {prioritycolor}
                 />);
             }
         }
@@ -148,7 +153,15 @@ export class TicketList extends React.Component<Props, State> {
     }
 
     formatTicketAuditWindow(): JSX.Element {
-        return (<div>PLACEHOLDER</div>);
+        const { title, description, status, priority } = this.popupItems;
+        return (<Template
+            key = 'popupWindowBody'
+            template_type = 'audit'
+            title = {title}
+            description = {description}
+            status = {status}
+            priority = {priority}
+        />);
     }
 
     formatSortMenuItem() {
@@ -212,9 +225,14 @@ export class TicketList extends React.Component<Props, State> {
         //used for the popup overlay
         if (this.state.popup === true) {
             const popupStyle = { opacity: this.popupAlpha };
-            popupContainer = <div key='popupShadow' className='popup-shadow' style={popupStyle}>
-                <div key='popUpClose' className='popup-close-button' onClick={() => this.closeTicketWindow()}>close</div>
-            </div>
+            popupContainer = (
+                <div key='popupShadow' className='popup-shadow' style={popupStyle}>
+                    <div key='popUpClose' className='popup-close-button' onClick={() => this.closeTicketWindow()}>
+                        close
+                    </div>
+                    {this.formatTicketAuditWindow()}
+                </div>
+            );
         }
 
         //Options bar on top of the ticket lists

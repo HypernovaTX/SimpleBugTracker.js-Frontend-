@@ -14,7 +14,7 @@ export class Misc {
     * @param {string} checkData - Must be an object as tring (try JSON.stringfy)
     * @returns {boolean}
     */
-   static isValidItem(checkData: string): boolean {
+   static isValidTicketItem(checkData: string): boolean {
        const check = JSON.parse(checkData);
        if (check.tid === null
        || check.tid === ''

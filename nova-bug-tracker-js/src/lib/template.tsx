@@ -14,16 +14,20 @@ type Props = {
     time?: number,
     description?: string,
     username?: string,
+    status?: number,
     statusname?: string,
     statuscolor?: string,
+    priority?: number, 
     priorityname?: string,
     prioritycolor?: string,
     function?: () => {}
 }
 
 type State = {
-    listPriority: string,   //List of priorities from the database (as objects as per item and list as arrays)
-    listStatus: string      //List of priorities from the database (same like listPriority)
+    listPriority: string,       //List of priorities from the database (as objects as per item and list as arrays)
+    listStatus: string,         //List of priorities from the database (same like listPriority)
+    selectedPriority: number,   //Used for the popup edit screen
+    selectedStatus: number      //Used for the popup edit screen
 }
 
 export class Template extends React.Component<Props, State> {
@@ -32,28 +36,41 @@ export class Template extends React.Component<Props, State> {
         super(p);
         this.state = {
             listPriority: '',
-            listStatus: ''
+            listStatus: '',
+            selectedPriority: this.props.status || 0,
+            selectedStatus: this.props.priority || 0
         };
+    }
+
+    componentDidMount() {
+        this.getListStatus();
+        this.getListPriority();
     }
 
     //======== Functions and Async stuffs ========
     //Get the list of statuses from the databse
     getListStatus = () => {
         const postData = { table: 'status' }
-        axios.post(`${CONFIG.api.source}/quickquery`, postData)
+        axios.post(`${CONFIG.api.source}quickquery`, postData)
         .then((response) => {
             this.setState({ listStatus: JSON.stringify(response.data) });
+            console.log('TEMPLATE TEST - GOT STATUS LIST: '+JSON.stringify(response.data));
         });
-    }
+    };
 
     //Get the list of priorities from the databse
     getListPriority = () => {
         const postData = { table: 'priority' }
-        axios.post(`${CONFIG.api.source}/quickquery`, postData)
+        axios.post(`${CONFIG.api.source}quickquery`, postData)
         .then((response) => {
             this.setState({ listPriority: JSON.stringify(response.data) });
+            console.log('TEMPLATE TEST - GOT PRIORITY LIST: '+JSON.stringify(response.data));
         });
-    }
+    };
+
+    //Event driven stuffs
+    updateStatusMenu = (event_i: any) => { this.setState({ selectedStatus: event_i.target.value }); };
+    updatePriorityMenu = (event_i: any) => { this.setState({ selectedPriority: event_i.target.value }); };
 
     //======== Begin Templates ========
     //This renders a block for a single ticket
@@ -102,34 +119,80 @@ export class Template extends React.Component<Props, State> {
 
     //This is the editing window when you creating/editing a ticket
     auditTicketWindow() {
-        const { title, statusname } = this.props;
-        const { listPriority, listStatus } = this.state;
-        this.getListStatus();
-        this.getListPriority();
+        const { title, description } = this.props;
+        const { listPriority, listStatus, selectedPriority, selectedStatus } = this.state;
 
-        let status = [{ name: '...', stid: 0 }];
-        let priority = [{ name: '...', prid: 0 }];
-        if (listPriority !== '') { status = JSON.parse(listPriority); }
-        if (listStatus !== '') { status = JSON.parse(listStatus); }
+        let statusobj = [{ name: '...', stid: 0 }];
+        let priorityobj = [{ name: '...', prid: 0 }];
+        if (listPriority !== '') { priorityobj = JSON.parse(listPriority); }
+        if (listStatus !== '') { statusobj = JSON.parse(listStatus); }
+
+        //status formatting
+        let formattedStatus = [<div key='tPlaceholderStatusList'></div>];
+        statusobj.forEach(obj => {
+            //Make sure the list of status is not "DELETED" (stid is -1)
+            if (obj.stid !== -1) {
+                formattedStatus.push(<option key={`tStatOption${obj.stid}`} value={obj.stid}>{obj.name}</option>);
+            }
+        });
+        formattedStatus.shift();
+
+        //priority formatting
+        let formattedPriority = [<div key='tPlaceholderPriorityList'></div>];
+        priorityobj.forEach(obj => {
+            formattedPriority.push(<option key={`tPrioOption${obj.prid}`} value={obj.prid}>{obj.name}</option>);
+        });
+        formattedPriority.shift();
 
         return (<div key='popupWindow' className='popup-window'>
-        <form key='audit-ticket' method='POST'>
-            <table key='popupWindowFormTable'>
-                <tr>
-                    <td>Title</td>
-                    <td><input type='text' value={( title || '' )} ></input></td>
+        <form key='popupWindow_form' method='POST'>
+            <table key='popupWindow_Form_Table'>
+                <tr key='pFTt_title'>
+                    <td key='pFTtd_titleName'>Title</td>
+                    <td key='pFTtd_titleInput'>
+                        <input
+                            key='pFTtdi_titleInput'
+                            type='text'
+                            value={title}
+                        ></input>
+                    </td>
                 </tr>
-                <tr>
-                    <td>Status</td>
-                    <td>
+                <tr key='pFTt_status'>
+                    <td key='pFTtd_titleName'>Status</td>
+                    <td key='pFTtd_titleSelect'>
                         <select
-                        key='sortMenuItem'
-                        value={statusname}
-                        className='dropdown edit-menu-status'
-                        onChange={() => this.setState({ })}
+                            key='pFTtdsi_statusSelect'
+                            value={selectedStatus}
+                            className='dropdown edit-menu-status'
+                            onChange={this.updateStatusMenu}
                         >
-
+                            {formattedStatus}
                         </select>
+                    </td>
+                </tr>
+                <tr key='pFTt_priority'>
+                    <td key='pFTtd_priorityName'>Priority</td>
+                    <td key='pFTtd_prioritySelect'>
+                        <select
+                            key = 'pFTtdsi_prioritySelect'
+                            value = {selectedPriority}
+                            className = 'dropdown edit-menu-priority'
+                            onChange = {this.updatePriorityMenu}
+                        >
+                            {formattedStatus}
+                        </select>
+                    </td>
+                </tr>
+                <tr key='pFTt_description'>
+                    <td key='pFTtd_descriptionName'>Description</td>
+                    <td key='pFTtd_descriptionInput'>
+                        <textarea
+                            key = 'pFTtdsi_descriptionInput'
+                            value = {description}
+                            onChange = {this.updatePriorityMenu}
+                            rows = {8}
+                            cols = {48}
+                        ></textarea>
                     </td>
                 </tr>
             </table>
@@ -162,13 +225,14 @@ export class Template extends React.Component<Props, State> {
     //Render the stuffs
     render() {
         let templateData = <div key='templatetemp'></div>;
+        let containerClass = 'template-container';
         switch (this.props.template_type) {
             case ('list_item'): templateData = this.ticketItem(); break;
             case ('audit'): templateData = this.auditTicketWindow(); break;
         }
 
         return (
-            <div key='templateContainer'>
+            <div key='templateContainer' className={containerClass}>
                 {templateData}
             </div>
         );
