@@ -6,19 +6,22 @@ import { Misc } from '../lib/misc';
 
 type Props = { showDisplay: boolean };
 type State = {
-    listItems: string,      //Items on the list (as objects as per item and list as arrays)
-    filter: string[],       //Used for filtering the list
-    loading: boolean,       //Used for loading that loads list
-    globalLoading: boolean, //User for loading that covers the entire screen
-    sortItem: string,       //sort by type
-    sortDirection: boolean, //sort direction (true - ASC, false - DESC)
-    popup: boolean,         //Used for pop-up editor
+    listItems: string,          //Items on the list (as objects as per item and list as arrays)
+    filter: string[],           //Used for filtering the list
+    loading: boolean,           //Used for loading that loads list
+    globalLoading: boolean,     //User for loading that covers the entire screen
+    sortItem: string,           //sort by type
+    sortDirection: boolean,     //sort direction (true - ASC, false - DESC)
+    popup: boolean,             //Used for pop-up editor
+    topBarBG: string,           //List top bar BG color
+    topBarBS: string,           //List top bar Box Shadow
+    topBarUpdate: boolean       //Used to force re-redering when the top bar style is updated
 };
 
 export class TicketList extends React.Component<Props, State> {
     private API_Request: NodeJS.Timeout;    //Used for making calls to the backend for list of tickets
     private popupAlpha: number;             //Popup window visibility
-    private popupItems = {          //Used for options in the popup window
+    private popupItems = {                  //Used for options in the popup window
         title: '',
         description: '',
         status: 1,
@@ -34,26 +37,53 @@ export class TicketList extends React.Component<Props, State> {
             globalLoading: true,
             sortItem: 'tid',
             sortDirection: true,
-            popup: false
+            popup: false,
+            topBarBG: 'none',
+            topBarBS: 'none',
+            topBarUpdate: false
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
         this.API_Request = setInterval(() => {}, 9999999999);
         this.popupAlpha = 0;
         clearInterval(this.API_Request);
+
+        //Bind some events
+        this.handleScroll = this.handleScroll.bind(this);
     }
 
     componentDidMount() {
         clearInterval(this.API_Request);
-        //Initial API request
-        this.getData();
-
+        this.getData(); //Initial API request
         //Run API request every X amount of time (see "..\config.json" > General > refreshInterval)
         this.API_Request = setInterval(() => this.getData(), CONFIG.general.refreshInterval);
+
+        window.addEventListener('scroll', this.handleScroll);
     }
 
     componentWillUnmount() {
         clearInterval(this.API_Request);
+    }
+
+    handleScroll() {
+        let { topBarUpdate, topBarBG, topBarBS } = this.state;
+        if (window.pageYOffset > 0) {
+            topBarBG = '#EEE';
+            topBarBS = '0 4px 4px -4px rgba(0, 0, 0, 0.5)';
+            if (topBarUpdate === false) {
+                topBarUpdate = true;
+                this.setState({ topBarBG, topBarBS, topBarUpdate });
+            }
+        } else {
+            let { topBarBG, topBarBS } = this.state;
+            topBarBG = 'none';
+            topBarBS = 'none';
+            if (topBarUpdate === true) {
+                topBarUpdate = false;
+                this.setState({ topBarBG, topBarBS, topBarUpdate });
+            }
+        }
+        
     }
 
     handleKeyPress = (event: React.KeyboardEvent) => {
@@ -167,7 +197,7 @@ export class TicketList extends React.Component<Props, State> {
         />);
     }
 
-    formatSortMenuItem() {
+    formatSortMenuItem(): JSX.Element {
         //Values is used for the SQL query for the backend to understand, Names are what showing at the front
         const sortItemsValues = ['t.tid', 't.time', 't.priority', 't.status', 't.title'];
         const sortItemNames = ['Ticket ID', 'Creation Date', 'Priority', 'Status', 'Ticket Title'];
@@ -192,7 +222,7 @@ export class TicketList extends React.Component<Props, State> {
                 </select>;
     }
 
-    formatSortMenuDirection() {
+    formatSortMenuDirection(): JSX.Element {
         //Since I cannot put boolean in JSX element, I have to put these in there as a placeholder
         const sortDirNames = ['Ascending', 'Descending']; 
 
@@ -217,16 +247,17 @@ export class TicketList extends React.Component<Props, State> {
     }
 
     render() {
+        const { loading, popup, listItems, topBarBG, topBarBS } = this.state;
         let data = [<div key='na'>N/A</div>];
         let popupContainer = <div key='popupFake'></div>;
 
         //list all of the tickets
-        if (this.state.loading === false && this.props.showDisplay) {
-            data = this.formatListItem(this.state.listItems);
+        if (loading === false && this.props.showDisplay) {
+            data = this.formatListItem(listItems);
         }
 
-        //used for the popup overlay
-        if (this.state.popup === true) {
+        //used for the popup overlay and window
+        if (popup === true) {
             const popupStyle = { opacity: this.popupAlpha };
             popupContainer = (
                 <div key='popupShadow' className='popup-shadow' style={popupStyle}>
@@ -239,20 +270,28 @@ export class TicketList extends React.Component<Props, State> {
         }
 
         //Options bar on top of the ticket lists
-        const topbar = <div key='listTopBar' className='list-head-bar'>
-            <div key='sortSection' className='sort-section'>
-                Sort by: {this.formatSortMenuItem()} {this.formatSortMenuDirection()}
+        const topBarStyle = {
+            background: topBarBG,
+            boxShadow: topBarBS
+        };
+        console.log(topBarStyle);
+        const topbar = (
+            <div key='listTopBar' className='list-head-bar' style={topBarStyle}>
+                <div key='listTopCOntent' className='list-head-content'>
+                    <div key='sortSection' className='sort-section'>
+                        Sort by: {this.formatSortMenuItem()} {this.formatSortMenuDirection()}
+                    </div>
+                    <div key='addTicketButtonSection' className='add-ticket-button-section'>
+                        {this.formatTicketButton()}
+                    </div>
+                </div>
             </div>
-            <div key='addTicketButtonSection' className='add-ticket-button-section'>
-                {this.formatTicketButton()}
-            </div>
-        </div>;
+        );
 
         return (
             <div key='listBody' className='list-body'>
-                {popupContainer}
-                {topbar}
-                {data}
+                {popupContainer}{topbar}
+                <div key='listWrapper' className='list-wrapper'>{data}</div>
             </div>
         );
     }

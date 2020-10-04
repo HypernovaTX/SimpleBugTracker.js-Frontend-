@@ -47,8 +47,10 @@ export class Template extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        this.getListStatus();
-        this.getListPriority();
+        if (this.props.template_type === 'audit') {
+            this.getListStatus();
+            this.getListPriority();
+        }
     }
 
     //======== Functions and Async stuffs ========
@@ -58,7 +60,6 @@ export class Template extends React.Component<Props, State> {
         axios.post(`${CONFIG.api.source}quickquery`, postData)
         .then((response) => {
             this.setState({ listStatus: JSON.stringify(response.data) });
-            console.log('TEMPLATE TEST - GOT STATUS LIST: '+JSON.stringify(response.data));
         });
     };
 
@@ -68,7 +69,6 @@ export class Template extends React.Component<Props, State> {
         axios.post(`${CONFIG.api.source}quickquery`, postData)
         .then((response) => {
             this.setState({ listPriority: JSON.stringify(response.data) });
-            console.log('TEMPLATE TEST - GOT PRIORITY LIST: '+JSON.stringify(response.data));
         });
     };
 
@@ -83,7 +83,8 @@ export class Template extends React.Component<Props, State> {
     ticketItem(): JSX.Element {
         const { tid, title, time, description, username, statusname, statuscolor, priorityname, prioritycolor } = this.props;
         
-        return <div key={`ticket${tid}`} className="ticket-block" id={`ticket-${tid}`}>
+        return (
+            <div key={`ticket${tid}`} className="ticket-block" id={`ticket-${tid}`}>
                 <div key={`ticketHead${tid}`} className="ticket-head">
                     <div key={`ticketTitle${tid}`} className="ticket-title">
                         #{tid} - {title}
@@ -120,11 +121,12 @@ export class Template extends React.Component<Props, State> {
                         {description}
                     </div>
                 </div>
-            </div>;
+            </div>
+        );
     }
 
     //This is the editing window when you creating/editing a ticket
-    auditTicketWindow() {
+    auditTicketWindow(): JSX.Element {
         //const {  } = this.props;
         const { listPriority, listStatus, priority, status, title, description } = this.state;
 
@@ -150,65 +152,71 @@ export class Template extends React.Component<Props, State> {
         });
         formattedPriority.shift();
 
-        return (<div key='popupWindow' className='popup-window'>
-        <form key='popupWindow_form' method='POST'>
-            <table key='popupWindow_Form_Table'>
-                <tr key='pFTt_title'>
-                    <td key='pFTtd_titleName'>Title</td>
-                    <td key='pFTtd_titleInput'>
-                        <input
-                            key = 'pFTtdi_titleInput'
-                            type = 'text'
-                            value = {title}
-                            onChange = {this.updateTitle}
-                            disabled = {this.props.disable || false }
-                        ></input>
-                    </td>
-                </tr>
-                <tr key='pFTt_status'>
-                    <td key='pFTtd_titleName'>Status</td>
-                    <td key='pFTtd_titleSelect'>
-                        <select
-                            key='pFTtdsi_statusSelect'
-                            value={status}
-                            className='dropdown edit-menu-status'
-                            onChange={this.updateStatusMenu}
-                            disabled = {this.props.disable || false }
-                        >
-                            {formattedStatus}
-                        </select>
-                    </td>
-                </tr>
-                <tr key='pFTt_priority'>
-                    <td key='pFTtd_priorityName'>Priority</td>
-                    <td key='pFTtd_prioritySelect'>
-                        <select
-                            key = 'pFTtdsi_prioritySelect'
-                            value = {priority}
-                            className = 'dropdown edit-menu-priority'
-                            onChange = {this.updatePriorityMenu}
-                            disabled = {this.props.disable || false }
-                        >
-                            {formattedPriority}
-                        </select>
-                    </td>
-                </tr>
-                <tr key='pFTt_description'>
-                    <td key='pFTtd_descriptionName'>Description</td>
-                    <td key='pFTtd_descriptionInput'>
-                        <textarea
-                            key = 'pFTtdsi_descriptionInput'
-                            value = {description}
-                            onChange = {this.updateDescription}
-                            rows = {8}
-                            cols = {48}
-                            disabled = {this.props.disable || false }
-                        ></textarea>
-                    </td>
-                </tr>
-            </table>
-        </form>
-    </div>)
+        return (
+            <div key='popup-window-outer' className='popup-window-outer'>
+                <div key='popupWindow' className='popup-window'>
+                    <form key='popupWindow_form' method='POST'>
+                        <table key='popupWindow_Form_Table'>
+                            <tr key='pFTt_title'>
+                                <td key='pFTtd_titleName'>Title</td>
+                                <td key='pFTtd_titleInput'>
+                                    <input
+                                        key = 'pFTtdi_titleInput'
+                                        type = 'text'
+                                        value = {title}
+                                        onChange = {this.updateTitle}
+                                        disabled = {this.props.disable || false }
+                                        className = 'popup-input'
+                                    ></input>
+                                </td>
+                            </tr>
+                            <tr key='pFTt_status'>
+                                <td key='pFTtd_titleName'>Status</td>
+                                <td key='pFTtd_titleSelect'>
+                                    <select
+                                        key='pFTtdsi_statusSelect'
+                                        value={status}
+                                        className='dropdown edit-menu-status'
+                                        onChange={this.updateStatusMenu}
+                                        disabled = {this.props.disable || false }
+                                    >
+                                        {formattedStatus}
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr key='pFTt_priority'>
+                                <td key='pFTtd_priorityName'>Priority</td>
+                                <td key='pFTtd_prioritySelect'>
+                                    <select
+                                        key = 'pFTtdsi_prioritySelect'
+                                        value = {priority}
+                                        className = 'dropdown edit-menu-priority'
+                                        onChange = {this.updatePriorityMenu}
+                                        disabled = {this.props.disable || false }
+                                    >
+                                        {formattedPriority}
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr key='pFTt_description'>
+                                <td key='pFTtd_descriptionName'>Description</td>
+                                <td key='pFTtd_descriptionInput'>
+                                    <textarea
+                                        key = 'pFTtdsi_descriptionInput'
+                                        value = {description}
+                                        onChange = {this.updateDescription}
+                                        rows = {8}
+                                        cols = {48}
+                                        disabled = {this.props.disable || false }
+                                        className = 'popup-textarea'
+                                    ></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        )
     }
 
     //Make status box for ticket editor
@@ -236,16 +244,11 @@ export class Template extends React.Component<Props, State> {
     //Render the stuffs
     render() {
         let templateData = <div key='templatetemp'></div>;
-        let containerClass = 'template-container';
         switch (this.props.template_type) {
             case ('list_item'): templateData = this.ticketItem(); break;
             case ('audit'): templateData = this.auditTicketWindow(); break;
         }
 
-        return (
-            <div key='templateContainer' className={containerClass}>
-                {templateData}
-            </div>
-        );
+        return (templateData);
     }
 }

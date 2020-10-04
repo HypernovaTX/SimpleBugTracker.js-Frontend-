@@ -13,6 +13,9 @@ code {
 td {
   vertical-align: top;
 }
+tr td:first-child {
+  text-align: right;
+}
 
 .main-body {
   width: 100%;
@@ -24,8 +27,9 @@ td {
 .sidebar {
   width: 25%;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.3);
+  background: #999;
   color: #FFF;
+  z-index: 1;
 }
 .main-interface {
   width: 75%;
@@ -34,9 +38,18 @@ td {
 }
 
 .list-head-bar {
-  margin: 8px 0;
+  position: fixed;
+  background: none;
+  width: 100%;
+  transition: 200ms linear all;
+}
+.list-head-content {
+  padding: 8px 0 4px;
   justify-content: space-between;
   display: flex;
+}
+.list-wrapper {
+  padding-top: 56px;
 }
 .ticket-block {
   margin: 0px 32px 24px 32px;
@@ -99,6 +112,8 @@ td {
 .add-ticket-button-section {
   display: inline-table;
   margin: 8px 32px;
+  position: fixed;
+  right: 0px;
 }
 select.dropdown {
   border: 0;
@@ -107,13 +122,13 @@ select.dropdown {
   transition: 100ms linear all;
   margin: 0 0 0 4px;
   padding: 4px;
-  border-radius: 1.3em;
+  border-radius: 12px;
 }
 select.dropdown:hover {
-  background-color: #777;
+  background-color: #555;
 }
 select.dropdown:active {
-  background-color: #999;
+  background-color: #777;
 }
 
 .add-ticket-button {
@@ -149,6 +164,7 @@ select.dropdown:active {
   left: 0;
   transition: opacity 500ms;
   backdrop-filter: blur(10px);
+  z-index: 9;
 }
 .popup-close-button {
   background: rgb(255, 52, 52);
@@ -172,7 +188,7 @@ select.dropdown:active {
 .popup-close-button:active {
   background: rgb(175, 19, 19);
 }
-.popup-shadow .template-container {
+.popup-window-outer {
   width: 100%;
   height: 100%;
   display: flex;
@@ -184,4 +200,23 @@ select.dropdown:active {
   border-radius: 12px;
   box-shadow: 8px 8px 12px rgba(0, 0, 0, 0.4);
   text-shadow: 0 0 16px #FFF;
+}
+.popup-input, .popup-textarea {
+  border: 0;
+  background-color: #444;
+  color: #FFF;
+  transition: 100ms linear all;
+  margin: 0 0 0 4px;
+  padding: 4px;
+  border-radius: 12px;
+}
+.popup-input:hover, .popup-textarea:hover {
+  background-color: #555;
+}
+.popup-input:focus, .popup-textarea:focus {
+  background-color: #555;
+  border-radius: 2px;
+}
+.popup-input:active, .popup-textarea:active {
+  background-color: #777;
 }
