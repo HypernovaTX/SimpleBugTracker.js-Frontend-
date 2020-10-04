@@ -26,19 +26,22 @@ type Props = {
 type State = {
     listPriority: string,       //List of priorities from the database (as objects as per item and list as arrays)
     listStatus: string,         //List of priorities from the database (same like listPriority)
-    selectedPriority: number,   //Used for the popup edit screen
-    selectedStatus: number      //Used for the popup edit screen
+    priority: number,           //Used for the popup edit screen
+    status: number,             //Used for the popup edit screen
+    title: string,              //Used for the popup edit screen
+    description: string         //Used for the popup edit screen
 }
 
 export class Template extends React.Component<Props, State> {
-
     constructor(p: Props) {
         super(p);
         this.state = {
             listPriority: '',
             listStatus: '',
-            selectedPriority: this.props.status || 0,
-            selectedStatus: this.props.priority || 0
+            status: this.props.status || 0,
+            priority: this.props.priority || 0,
+            title: this.props.title || '',
+            description: this.props.description || ''
         };
     }
 
@@ -69,8 +72,10 @@ export class Template extends React.Component<Props, State> {
     };
 
     //Event driven stuffs
-    updateStatusMenu = (event_i: any) => { this.setState({ selectedStatus: event_i.target.value }); };
-    updatePriorityMenu = (event_i: any) => { this.setState({ selectedPriority: event_i.target.value }); };
+    updateTitle = (event_i: any) => { this.setState({ title: event_i.target.value }); };
+    updateDescription = (event_i: any) => { this.setState({ description: event_i.target.value }); };
+    updateStatusMenu = (event_i: any) => { this.setState({ status: event_i.target.value }); };
+    updatePriorityMenu = (event_i: any) => { this.setState({ priority: event_i.target.value }); };
 
     //======== Begin Templates ========
     //This renders a block for a single ticket
@@ -119,13 +124,13 @@ export class Template extends React.Component<Props, State> {
 
     //This is the editing window when you creating/editing a ticket
     auditTicketWindow() {
-        const { title, description } = this.props;
-        const { listPriority, listStatus, selectedPriority, selectedStatus } = this.state;
+        //const {  } = this.props;
+        const { listPriority, listStatus, priority, status, title, description } = this.state;
 
         let statusobj = [{ name: '...', stid: 0 }];
         let priorityobj = [{ name: '...', prid: 0 }];
-        if (listPriority !== '') { priorityobj = JSON.parse(listPriority); }
         if (listStatus !== '') { statusobj = JSON.parse(listStatus); }
+        if (listPriority !== '') { priorityobj = JSON.parse(listPriority); }
 
         //status formatting
         let formattedStatus = [<div key='tPlaceholderStatusList'></div>];
@@ -151,9 +156,10 @@ export class Template extends React.Component<Props, State> {
                     <td key='pFTtd_titleName'>Title</td>
                     <td key='pFTtd_titleInput'>
                         <input
-                            key='pFTtdi_titleInput'
-                            type='text'
-                            value={title}
+                            key = 'pFTtdi_titleInput'
+                            type = 'text'
+                            value = {title}
+                            onChange = {this.updateTitle}
                         ></input>
                     </td>
                 </tr>
@@ -162,7 +168,7 @@ export class Template extends React.Component<Props, State> {
                     <td key='pFTtd_titleSelect'>
                         <select
                             key='pFTtdsi_statusSelect'
-                            value={selectedStatus}
+                            value={status}
                             className='dropdown edit-menu-status'
                             onChange={this.updateStatusMenu}
                         >
@@ -175,11 +181,11 @@ export class Template extends React.Component<Props, State> {
                     <td key='pFTtd_prioritySelect'>
                         <select
                             key = 'pFTtdsi_prioritySelect'
-                            value = {selectedPriority}
+                            value = {priority}
                             className = 'dropdown edit-menu-priority'
                             onChange = {this.updatePriorityMenu}
                         >
-                            {formattedStatus}
+                            {formattedPriority}
                         </select>
                     </td>
                 </tr>
@@ -189,7 +195,7 @@ export class Template extends React.Component<Props, State> {
                         <textarea
                             key = 'pFTtdsi_descriptionInput'
                             value = {description}
-                            onChange = {this.updatePriorityMenu}
+                            onChange = {this.updateDescription}
                             rows = {8}
                             cols = {48}
                         ></textarea>
