@@ -71,7 +71,7 @@ export class EditTicket extends React.Component<Props, State> {
         });
     };
 
-    postData = () => {
+    postDataToAPI = () => {
         const postData = {
             title: this.state.title,
             status: this.state.status,
@@ -118,7 +118,7 @@ export class EditTicket extends React.Component<Props, State> {
             disabled: true,
             buttonText: <span key='spb_submit'><i className="fa fa-refresh fa-spin"></i>Loading</span>
         });
-        this.postData();
+        this.postDataToAPI();
     }
 
     //This is the editing window when you creating/editing a ticket
