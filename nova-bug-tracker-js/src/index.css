@@ -202,7 +202,7 @@ select.dropdown:active {
   text-shadow: 0 0 16px #FFF;
 }
 .popup-input, .popup-textarea {
-  border: 0;
+  border: 1px solid rgba(0,0,0,0);
   background-color: #444;
   color: #FFF;
   transition: 100ms linear all;
@@ -219,4 +219,7 @@ select.dropdown:active {
 }
 .popup-input:active, .popup-textarea:active {
   background-color: #777;
+}
+.blankInput {
+  border: 1px solid red;
 }

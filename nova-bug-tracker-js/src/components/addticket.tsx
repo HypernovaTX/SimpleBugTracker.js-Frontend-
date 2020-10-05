@@ -23,7 +23,9 @@ type State = {
     title: string,
     description: string,
     disabled: boolean,
-    buttonText: JSX.Element | string
+    buttonText: JSX.Element | string,
+    blankTitle: boolean,
+    blankDescription: boolean
 };
 
 export class EditTicket extends React.Component<Props, State> {
@@ -37,8 +39,10 @@ export class EditTicket extends React.Component<Props, State> {
             priority: this.props.priority,
             title: this.props.title,
             description: this.props.description,
-            disabled: this.props.disable,
-            buttonText: 'Submit'
+            disabled: (this.props.disable) ? false : true,
+            buttonText: <span key='spb_submit'>Submit</span>,
+            blankTitle: false,
+            blankDescription: false
         };
     }
 
@@ -68,7 +72,6 @@ export class EditTicket extends React.Component<Props, State> {
     };
 
     postData = () => {
-
         const postData = {
             title: this.state.title,
             status: this.state.status,
@@ -76,26 +79,44 @@ export class EditTicket extends React.Component<Props, State> {
             description: this.state.description,
             uid: 1,
             platform: 1,
-            time: new Date()
+            time: Date.now()
         }
-
-        axios.post(`${CONFIG.api.source}`, postData)
+        const URL = (this.props.new) ? 'newticket' : 'newticket';
+        console.log('priorityType: '+ (typeof postData.priority));
+        axios.post(CONFIG.api.source + URL, postData)
         .then((response) => {
+            if (response.data === 'SENT') {
+                this.setState({ buttonText: 'DONE!' });
+            }
         });
     }
 
     //Event driven stuffs
-    updateTitle = (event_i: any) => { this.setState({ title: event_i.target.value }); };
-    updateDescription = (event_i: any) => { this.setState({ description: event_i.target.value }); };
+    updateTitle = (event_i: any) => {
+        const blankTitle = (event_i.target.value === ''); 
+        this.setState({ title: event_i.target.value, blankTitle });
+    };
+    updateDescription = (event_i: any) => {
+        const blankDescription = (event_i.target.value === ''); 
+        this.setState({ description: event_i.target.value, blankDescription });
+    };
     updateStatusMenu = (event_i: any) => { this.setState({ status: event_i.target.value }); };
     updatePriorityMenu = (event_i: any) => { this.setState({ priority: event_i.target.value }); };
 
     //This will begin to send data to the API
     startPostingData() {
+        //Make sure all contents are not blank
+        if (this.state.title === '' || this.state.description === '') {
+            const blankTitle = (this.state.title === '');
+            const blankDescription = (this.state.description === '');
+            this.setState({ blankTitle, blankDescription });
+            return;
+        }
+
         //disabled all to prevent further inputs
         this.setState({
             disabled: true,
-            buttonText: <i className="fa fa-refresh fa-spin"></i> + 'Loading...'
+            buttonText: <span key='spb_submit'><i className="fa fa-refresh fa-spin"></i>Loading</span>
         });
         this.postData();
     }
@@ -127,6 +148,9 @@ export class EditTicket extends React.Component<Props, State> {
         });
         formattedPriority.shift();
 
+        const blankTitleClass = (this.state.blankTitle) ? 'blankInput' : '';
+        const blankDescriptionClass = (this.state.blankDescription) ? 'blankInput' : '';
+
         return (
             <div key='popup-window-outer' className='popup-window-outer'>
                 <div key='popupWindow' className='popup-window'>
@@ -141,7 +165,7 @@ export class EditTicket extends React.Component<Props, State> {
                                         value = {title}
                                         onChange = {this.updateTitle}
                                         disabled = {this.state.disabled || false}
-                                        className = 'popup-input'
+                                        className = {`popup-input ${blankTitleClass}`}
                                     ></input>
                                 </td>
                             </tr>
@@ -183,7 +207,7 @@ export class EditTicket extends React.Component<Props, State> {
                                         rows = {8}
                                         cols = {48}
                                         disabled = {this.state.disabled || false}
-                                        className = 'popup-textarea'
+                                        className = {`popup-input ${blankDescriptionClass}`}
                                     ></textarea>
                                 </td>
                             </tr>

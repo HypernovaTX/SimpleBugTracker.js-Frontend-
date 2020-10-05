@@ -17,12 +17,12 @@ type State = {
     topBarBG: string,           //List top bar BG color
     topBarBS: string,           //List top bar Box Shadow
     topBarUpdate: boolean,      //Used to force re-redering when the top bar style is updated
-    newTicket: boolean          //Used to assgin the ticket editor whether the ticket is a new or an edit
+    newTicket: boolean,         //Used to assgin the ticket editor whether the ticket is a new or an edit
+    popupAlpha: number          //Popup window visibility
 };
 
 export class TicketList extends React.Component<Props, State> {
-    private API_Request: NodeJS.Timeout;    //Used for making calls to the backend for list of tickets
-    private popupAlpha: number;             //Popup window visibility
+    private API_Request: NodeJS.Timeout;    //Used for making calls to the backend for list of tickets           
     private popupItems = {                  //Used for options in the popup window
         title: '',
         description: '',
@@ -43,12 +43,12 @@ export class TicketList extends React.Component<Props, State> {
             topBarBG: 'none',
             topBarBS: 'none',
             topBarUpdate: false,
-            newTicket: false
+            newTicket: false,
+            popupAlpha: 0
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
         this.API_Request = setInterval(() => {}, 9999999999);
-        this.popupAlpha = 0;
         clearInterval(this.API_Request);
 
         //Bind some events
@@ -130,9 +130,9 @@ export class TicketList extends React.Component<Props, State> {
             //document.body.style.position = 'fixed';
             //document.body.style.y = window.pageYOffset;
             //document.body.style.overflowY = 'scroll';
-            this.popupAlpha = 0;
+            this.setState({ popupAlpha: 0 });
             setTimeout(() => {
-                this.popupAlpha = 1;
+                this.setState({ popupAlpha: 1 });
                 this.forceUpdate();
             }, 10);
         }
@@ -140,8 +140,7 @@ export class TicketList extends React.Component<Props, State> {
 
     closeTicketWindow(): void {
         if (this.state.popup === true) {
-            this.popupAlpha = 0;
-            this.forceUpdate();
+            this.setState({ popupAlpha: 0 });
             //document.body.style.position = 'static';
             //document.body.style.overflowY = 'auto';
             setTimeout(() => {
@@ -201,8 +200,9 @@ export class TicketList extends React.Component<Props, State> {
 
     formatTicketAuditWindow(): JSX.Element {
         const { title, description, status, priority } = this.popupItems;
+        const { popupAlpha, newTicket } = this.state;
         let disable = false;
-        if (this.popupAlpha === 0) { disable = true; }
+        if (popupAlpha === 0) { disable = true; }
         return (<EditTicket
             key = 'popupWindowBody'
             title = {title}
@@ -210,7 +210,7 @@ export class TicketList extends React.Component<Props, State> {
             status = {status}
             priority = {priority}
             disable = {disable}
-            new = {this.state.newTicket}
+            new = {newTicket}
         />);
     }
 
@@ -264,7 +264,7 @@ export class TicketList extends React.Component<Props, State> {
     }
 
     render() {
-        const { loading, popup, listItems, topBarBG, topBarBS } = this.state;
+        const { loading, popup, listItems, topBarBG, topBarBS, popupAlpha } = this.state;
         let data = [<div key='na'>N/A</div>];
         let popupContainer = <div key='popupFake'></div>;
 
@@ -275,7 +275,7 @@ export class TicketList extends React.Component<Props, State> {
 
         //used for the popup overlay and window
         if (popup === true) {
-            const popupStyle = { opacity: this.popupAlpha };
+            const popupStyle = { opacity: popupAlpha };
             popupContainer = (
                 <div key='popupShadow' className='popup-shadow' style={popupStyle}>
                     <div key='popUpClose' className='popup-close-button' onClick={() => this.closeTicketWindow()}>
@@ -291,7 +291,7 @@ export class TicketList extends React.Component<Props, State> {
             background: topBarBG,
             boxShadow: topBarBS
         };
-        console.log(topBarStyle);
+        
         const topbar = (
             <div key='listTopBar' className='list-head-bar' style={topBarStyle}>
                 <div key='listTopCOntent' className='list-head-content'>
