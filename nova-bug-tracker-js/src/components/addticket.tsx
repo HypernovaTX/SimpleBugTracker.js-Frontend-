@@ -13,7 +13,7 @@ type Props = {
     priority: number, 
     disable: boolean,
     new: boolean,
-    function?: () => {}
+    closeWindow: CallableFunction
 };
 type State = {
     listPriority: string,       //List of priorities from the database (as objects as per item and list as arrays)
@@ -87,6 +87,7 @@ export class EditTicket extends React.Component<Props, State> {
         .then((response) => {
             if (response.data === 'SENT') {
                 this.setState({ buttonText: 'DONE!' });
+                this.props.closeWindow();
             }
         });
     }

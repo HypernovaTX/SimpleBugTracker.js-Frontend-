@@ -138,7 +138,7 @@ export class TicketList extends React.Component<Props, State> {
         }
     }
 
-    closeTicketWindow(): void {
+    closeTicketWindow = () => {
         if (this.state.popup === true) {
             this.setState({ popupAlpha: 0 });
             //document.body.style.position = 'static';
@@ -211,6 +211,7 @@ export class TicketList extends React.Component<Props, State> {
             priority = {priority}
             disable = {disable}
             new = {newTicket}
+            closeWindow = {this.closeTicketWindow}
         />);
     }
 
@@ -278,7 +279,7 @@ export class TicketList extends React.Component<Props, State> {
             const popupStyle = { opacity: popupAlpha };
             popupContainer = (
                 <div key='popupShadow' className='popup-shadow' style={popupStyle}>
-                    <div key='popUpClose' className='popup-close-button' onClick={() => this.closeTicketWindow()}>
+                    <div key='popUpClose' className='popup-close-button' onClick={this.closeTicketWindow}>
                         close
                     </div>
                     {this.formatTicketAuditWindow()}
@@ -291,7 +292,7 @@ export class TicketList extends React.Component<Props, State> {
             background: topBarBG,
             boxShadow: topBarBS
         };
-        
+
         const topbar = (
             <div key='listTopBar' className='list-head-bar' style={topBarStyle}>
                 <div key='listTopCOntent' className='list-head-content'>
