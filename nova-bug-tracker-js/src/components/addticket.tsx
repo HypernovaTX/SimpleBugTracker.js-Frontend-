@@ -79,7 +79,7 @@ export class EditTicket extends React.Component<Props, State> {
             description: this.state.description,
             uid: 1,
             platform: 1,
-            time: Date.now()
+            time: Math.floor(Date.now() / 1000)
         }
         const URL = (this.props.new) ? 'newticket' : 'newticket';
         console.log('priorityType: '+ (typeof postData.priority));
