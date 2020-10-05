@@ -124,7 +124,7 @@ export class TicketList extends React.Component<Props, State> {
 
     
 
-    showTicketWindow(): void {
+    showTicketWindow = () => {
         if (this.state.popup === false) {
             this.setState({ popup: true });
             //document.body.style.position = 'fixed';
