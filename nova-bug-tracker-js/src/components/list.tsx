@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import * as CONFIG from '../config.json';
 import { Template } from '../lib/template';
+import { EditTicket } from './addticket';
 import { Misc } from '../lib/misc';
 
 type Props = { showDisplay: boolean };
@@ -15,7 +16,8 @@ type State = {
     popup: boolean,             //Used for pop-up editor
     topBarBG: string,           //List top bar BG color
     topBarBS: string,           //List top bar Box Shadow
-    topBarUpdate: boolean       //Used to force re-redering when the top bar style is updated
+    topBarUpdate: boolean,      //Used to force re-redering when the top bar style is updated
+    newTicket: boolean          //Used to assgin the ticket editor whether the ticket is a new or an edit
 };
 
 export class TicketList extends React.Component<Props, State> {
@@ -40,7 +42,8 @@ export class TicketList extends React.Component<Props, State> {
             popup: false,
             topBarBG: 'none',
             topBarBS: 'none',
-            topBarUpdate: false
+            topBarUpdate: false,
+            newTicket: false
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -68,7 +71,7 @@ export class TicketList extends React.Component<Props, State> {
     handleScroll() {
         let { topBarUpdate, topBarBG, topBarBS } = this.state;
         if (window.pageYOffset > 0) {
-            topBarBG = '#EEE';
+            topBarBG = 'rgba(255, 255, 255, 0.95)';
             topBarBS = '0 4px 4px -4px rgba(0, 0, 0, 0.5)';
             if (topBarUpdate === false) {
                 topBarUpdate = true;
@@ -124,8 +127,9 @@ export class TicketList extends React.Component<Props, State> {
     showTicketWindow(): void {
         if (this.state.popup === false) {
             this.setState({ popup: true });
-            document.body.style.position = 'fixed';
-            document.body.style.overflowY = 'scroll';
+            //document.body.style.position = 'fixed';
+            //document.body.style.y = window.pageYOffset;
+            //document.body.style.overflowY = 'scroll';
             this.popupAlpha = 0;
             setTimeout(() => {
                 this.popupAlpha = 1;
@@ -138,8 +142,8 @@ export class TicketList extends React.Component<Props, State> {
         if (this.state.popup === true) {
             this.popupAlpha = 0;
             this.forceUpdate();
-            document.body.style.position = 'static';
-            document.body.style.overflowY = 'auto';
+            //document.body.style.position = 'static';
+            //document.body.style.overflowY = 'auto';
             setTimeout(() => {
                 this.setState({ popup: false });
             }, 500);
@@ -178,22 +182,35 @@ export class TicketList extends React.Component<Props, State> {
         return output;
     }
 
+
+    //The "Add Ticket" button
     formatTicketButton(): JSX.Element {
-        return (<div key='addTicketButton' className='add-ticket-button' onClick={() => this.showTicketWindow()}>Add Ticket</div>);
+        return (
+            <div
+                key='addTicketButton'
+                className='add-ticket-button'
+                onClick={() => {
+                    this.setState({ newTicket: true });
+                    this.showTicketWindow();
+                }}
+            >
+                Add Ticket
+            </div>
+        );
     }
 
     formatTicketAuditWindow(): JSX.Element {
         const { title, description, status, priority } = this.popupItems;
         let disable = false;
         if (this.popupAlpha === 0) { disable = true; }
-        return (<Template
+        return (<EditTicket
             key = 'popupWindowBody'
-            template_type = 'audit'
             title = {title}
             description = {description}
             status = {status}
             priority = {priority}
             disable = {disable}
+            new = {this.state.newTicket}
         />);
     }
 
