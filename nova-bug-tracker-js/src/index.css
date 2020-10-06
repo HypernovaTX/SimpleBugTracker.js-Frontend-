@@ -10,11 +10,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-td {
+/*td {
   vertical-align: top;
 }
 tr td:first-child {
   text-align: right;
+  font-size: 0.75em;
+  padding-top: 5px;
+}*/
+.pu-form-title {
   font-size: 0.75em;
   padding-top: 5px;
 }
@@ -203,12 +207,14 @@ select.dropdown:active {
   box-shadow: 8px 8px 12px rgba(0, 0, 0, 0.4);
   text-shadow: 0 0 16px #FFF;
 }
+.popup-window select.dropdown {
+  margin: 0;
+}
 .popup-input, .popup-textarea {
   border: 1px solid rgba(0,0,0,0);
   background-color: #444;
   color: #FFF;
   transition: 100ms linear all;
-  margin: 0 0 0 4px;
   padding: 4px;
   border-radius: 12px;
 }
@@ -246,4 +252,14 @@ select.dropdown:active {
 }
 .submit-button span {
   width: 100%;
+}
+.form-block {
+
+}
+.form-block.dropdown{
+  display: inline-block;
+  margin-right: 12px;
+}
+.form-block.submit {
+  margin-top: 4px;
 }
