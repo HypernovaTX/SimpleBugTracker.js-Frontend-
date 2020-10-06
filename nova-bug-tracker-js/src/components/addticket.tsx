@@ -219,6 +219,7 @@ export class EditTicket extends React.Component<Props, State> {
                                 type = "button"
                                 disabled = {this.state.disabled || false}
                                 onClick = {() => this.startPostingData()}
+                                className = 'submit-button'
                             >
                                 {this.state.buttonText}
                             </button>

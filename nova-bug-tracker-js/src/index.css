@@ -15,6 +15,8 @@ td {
 }
 tr td:first-child {
   text-align: right;
+  font-size: 0.75em;
+  padding-top: 5px;
 }
 
 .main-body {
@@ -222,4 +224,26 @@ select.dropdown:active {
 }
 .blankInput {
   border: 1px solid red;
+}
+.submit-button {
+  display: inline-flex;
+  width: 100%;
+  text-align: center;
+  border: 0;
+  font-size: 1.1em;
+  text-transform: uppercase;
+  background: #ff3c16;
+  color: #FFF;
+  padding: 8px;
+  border-radius: 12px;
+  transition: 100ms linear all;
+}
+.submit-button:hover {
+  background-color: #ff6749;
+}
+.submit-button:active {
+  background-color: #ffa391;
+}
+.submit-button span {
+  width: 100%;
 }
