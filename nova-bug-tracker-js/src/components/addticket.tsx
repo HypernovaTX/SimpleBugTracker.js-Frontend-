@@ -25,7 +25,8 @@ type State = {
     disabled: boolean,
     buttonText: JSX.Element | string,
     blankTitle: boolean,
-    blankDescription: boolean
+    blankDescription: boolean,
+    new: boolean
 };
 
 export class EditTicket extends React.Component<Props, State> {
@@ -39,10 +40,11 @@ export class EditTicket extends React.Component<Props, State> {
             priority: this.props.priority,
             title: this.props.title,
             description: this.props.description,
-            disabled: (this.props.disable) ? false : true,
+            disabled: !this.props.disable,
             buttonText: <span key='spb_submit'>Submit</span>,
             blankTitle: false,
-            blankDescription: false
+            blankDescription: false,
+            new: this.props.new
         };
     }
 
@@ -50,6 +52,13 @@ export class EditTicket extends React.Component<Props, State> {
     componentDidMount() {
         this.getListStatus();
         this.getListPriority();
+        window.addEventListener('keydown', this.handleKeypress);
+    }
+
+    handleKeypress = (ev: KeyboardEvent) => {
+        if (ev.key === 'Escape'){
+          this.exitEditing();
+        }
     }
     
     //======== Functions and Async stuffs ========
@@ -87,7 +96,7 @@ export class EditTicket extends React.Component<Props, State> {
         .then((response) => {
             if (response.data === 'SENT') {
                 this.setState({ buttonText: 'DONE!' });
-                this.props.closeWindow();
+                this.exitEditing();
             }
         });
     }
@@ -120,6 +129,15 @@ export class EditTicket extends React.Component<Props, State> {
             buttonText: <span key='spb_submit'><i className="fa fa-refresh fa-spin"></i>Loading</span>
         });
         this.postDataToAPI();
+    }
+
+    //Close the editor
+    exitEditing() {
+        const { disabled } = this.state;
+        if (!disabled) {
+            this.setState({ disabled: true });
+            this.props.closeWindow();
+        }
     }
 
     //This is the editing window when you creating/editing a ticket

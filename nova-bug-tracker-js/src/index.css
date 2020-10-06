@@ -261,6 +261,9 @@ select.dropdown:active {
 .submit-button:active {
   background-color: #ffa391;
 }
+.submit-button:disabled {
+  background-color: #978e8c;
+}
 .submit-button span {
   width: 100%;
 }

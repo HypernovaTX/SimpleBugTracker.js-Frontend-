@@ -89,12 +89,6 @@ export class TicketList extends React.Component<Props, State> {
         
     }
 
-    handleKeyPress = (event: React.KeyboardEvent) => {
-        if (event.key === 'Enter'){
-          console.log('ENTER!!!!!!!');
-        }
-    }
-
     //MAIN API Request
     getData = () => {
         const postData = {
