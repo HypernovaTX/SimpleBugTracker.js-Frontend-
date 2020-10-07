@@ -96,7 +96,7 @@ export class EditTicket extends React.Component<Props, State> {
         .then((response) => {
             if (response.data === 'SENT') {
                 this.setState({ buttonText: 'DONE!' });
-                this.exitEditing();
+                setTimeout(() => this.props.closeWindow(), 500);
             }
         });
     }

@@ -38,6 +38,7 @@ export class Template extends React.Component<Props, State> {
         return (
             <div key={`ticket${tid}`} className="ticket-block" id={`ticket-${tid}`}>
                 <div key={`ticketHead${tid}`} className="ticket-head">
+                    <div key={`ticketEdit${tid}`}></div>
                     <div key={`ticketTitle${tid}`} className="ticket-title">
                         #{tid} - {title}
                     </div>
