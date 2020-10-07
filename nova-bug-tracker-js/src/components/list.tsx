@@ -20,8 +20,18 @@ type State = {
     topBarBS: string,           //List top bar Box Shadow
     topBarUpdate: boolean,      //Used to force re-redering when the top bar style is updated
     newTicket: boolean,         //Used to assgin the ticket editor whether the ticket is a new or an edit
-    popupAlpha: number          //Popup window visibility
+    popupAlpha: number,         //Popup window visibility
+    editTicketInfo: any[]       //Used for sending data to the popup window
 };
+/** INFO for this.state.editTicketInfo: [
+ *      new: bool, (whether this is a new ticket or editing an existing ticket)
+ *      title: string, (the title of the ticket)
+ *      desctiption: string, (the ticket description)
+ *      status: integer, (the number for the status - look up hbt_status for the "stid")
+ *      priority: integer (the number for the priority - look up hbt_priority for the "prid")
+ * ]
+ * DO NOT PUT THE ITEMS IN THE WRONG ORDER!
+ */
 
 export class TicketList extends React.Component<Props, State> {
     private API_Request: NodeJS.Timeout;    //Used for making calls to the backend for list of tickets           
@@ -46,7 +56,8 @@ export class TicketList extends React.Component<Props, State> {
             topBarBS: 'none',
             topBarUpdate: false,
             newTicket: false,
-            popupAlpha: 0
+            popupAlpha: 0,
+            editTicketInfo: [false, '', '', 0, 0]
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -120,9 +131,14 @@ export class TicketList extends React.Component<Props, State> {
 
     
 
-    showTicketWindow = (title = '', status = '', priority = '', description = '') => {
+    showTicketWindow = (newTk = false, title = '', description = '', status = 0, priority = 0) => {
         if (this.state.popup === false) {
-            this.setState({ popup: true });
+            this.setState({
+                popup: true,
+                editTicketInfo: [
+                    newTk, title, description, status, priority
+                ]
+            });
             //document.body.style.position = 'fixed';
             //document.body.style.y = window.pageYOffset;
             //document.body.style.overflowY = 'scroll';
@@ -158,7 +174,11 @@ export class TicketList extends React.Component<Props, State> {
             const checkDelete = imported[i].status; //If status returns as -1, it is "deleted"
             if (checkDelete !== -1
             && Misc.isValidTicketItem(JSON.stringify(imported[i]))) {
-                const { tid, title, time, description, username, statusname, statuscolor, priorityname, prioritycolor } = imported[i];
+                const {
+                    tid, title, time, description,
+                    username, statusname, statuscolor,
+                    priorityname, prioritycolor, status, priority
+                } = imported[i];
                 output.push(<Template
                     key = {`list_item${i}`}
                     template_type = 'list_item'
@@ -167,8 +187,10 @@ export class TicketList extends React.Component<Props, State> {
                     time = {time}
                     description = {description}
                     username = {username}
+                    status = {status}
                     statusname = {statusname}
                     statuscolor = {statuscolor}
+                    priority = {priority}
                     priorityname = {priorityname}
                     prioritycolor = {prioritycolor}
                     func_edit = {this.showTicketWindow}
@@ -187,7 +209,7 @@ export class TicketList extends React.Component<Props, State> {
                 className='add-ticket-button'
                 onClick={() => {
                     this.setState({ newTicket: true });
-                    this.showTicketWindow();
+                    this.showTicketWindow(false, '', '', 1, 5);
                 }}
             >
                 <FontAwesomeIcon icon={faPlus} /> Add Ticket
@@ -196,18 +218,17 @@ export class TicketList extends React.Component<Props, State> {
     }
 
     formatTicketAuditWindow(): JSX.Element {
-        const { title, description, status, priority } = this.popupItems;
-        const { popupAlpha, newTicket } = this.state;
+        const { popupAlpha } = this.state;
         let disable = false;
         if (popupAlpha === 0) { disable = true; }
         return (<EditTicket
             key = 'popupWindowBody'
-            title = {title}
-            description = {description}
-            status = {status}
-            priority = {priority}
+            title = {this.state.editTicketInfo[1]}
+            description = {this.state.editTicketInfo[2]}
+            status = {this.state.editTicketInfo[3]}
+            priority = {this.state.editTicketInfo[4]}
             disable = {disable}
-            new = {newTicket}
+            new = {this.state.editTicketInfo[0]}
             closeWindow = {this.closeTicketWindow}
         />);
     }
