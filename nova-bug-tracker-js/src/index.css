@@ -285,9 +285,6 @@ select.dropdown:active {
 .submit-button span {
   width: 100%;
 }
-.form-block {
-
-}
 .form-block.dropdown{
   display: inline-block;
   margin-right: 12px;

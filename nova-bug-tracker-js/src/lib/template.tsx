@@ -14,13 +14,14 @@ type Props = {
     time?: number,
     description?: string,
     username?: string,
-    status?: number,
+    status?: string,
     statusname?: string,
     statuscolor?: string,
-    priority?: number, 
+    priority?: string,
     priorityname?: string,
     prioritycolor?: string,
-    disable?: boolean
+    func_edit?: CallableFunction,
+    func_delete?: CallableFunction
 }
 
 type State = {
@@ -32,6 +33,11 @@ export class Template extends React.Component<Props, State> {
         super(p);
     }*/
 
+    //Callback functions 
+    editTicket = () => {
+        if (this.props.func_edit !== undefined) { this.props.func_edit(); }
+    };
+
     //======== Begin Templates ========
     //This renders a block for a single ticket
     ticketItem(): JSX.Element {
@@ -41,7 +47,7 @@ export class Template extends React.Component<Props, State> {
             <div key={`ticket${tid}`} className="ticket-block" id={`ticket-${tid}`}>
                 <div key={`ticketHead${tid}`} className="ticket-head">
                     <div key={`ticketEditSection${tid}`} className='tk-edit-section'>
-                        <div key={`tkes_edit${tid}`} className='tk-edit-button'>
+                        <div key={`tkes_edit${tid}`} className='tk-edit-button' onClick={this.editTicket}>
                             <FontAwesomeIcon icon={faEdit} /> Edit
                         </div>
                         <div key={`tkes_delete${tid}`} className='tk-edit-button'>

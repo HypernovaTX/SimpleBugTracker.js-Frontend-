@@ -120,7 +120,7 @@ export class TicketList extends React.Component<Props, State> {
 
     
 
-    showTicketWindow = () => {
+    showTicketWindow = (title = '', status = '', priority = '', description = '') => {
         if (this.state.popup === false) {
             this.setState({ popup: true });
             //document.body.style.position = 'fixed';
@@ -171,6 +171,7 @@ export class TicketList extends React.Component<Props, State> {
                     statuscolor = {statuscolor}
                     priorityname = {priorityname}
                     prioritycolor = {prioritycolor}
+                    func_edit = {this.showTicketWindow}
                 />);
             }
         }
