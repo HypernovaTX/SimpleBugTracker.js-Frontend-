@@ -1,7 +1,7 @@
 import React from 'react';
 import { Misc } from './misc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 /* HOW TO USE TEMPLATE
  * 
@@ -41,8 +41,12 @@ export class Template extends React.Component<Props, State> {
             <div key={`ticket${tid}`} className="ticket-block" id={`ticket-${tid}`}>
                 <div key={`ticketHead${tid}`} className="ticket-head">
                     <div key={`ticketEditSection${tid}`} className='tk-edit-section'>
-                        <FontAwesomeIcon icon={faEdit} />
-                        <i className="fal fa-edit"></i>
+                        <div key={`tkes_edit${tid}`} className='tk-edit-button'>
+                            <FontAwesomeIcon icon={faEdit} /> Edit
+                        </div>
+                        <div key={`tkes_delete${tid}`} className='tk-edit-button'>
+                            <FontAwesomeIcon icon={faTrash} /> Delete
+                        </div>
                     </div>
                     <div key={`ticketTitle${tid}`} className="ticket-title">
                         #{tid} - {title}

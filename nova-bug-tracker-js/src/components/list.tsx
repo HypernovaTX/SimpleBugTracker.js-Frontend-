@@ -4,6 +4,8 @@ import * as CONFIG from '../config.json';
 import { Template } from '../lib/template';
 import { EditTicket } from './addticket';
 import { Misc } from '../lib/misc';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 type Props = { showDisplay: boolean };
 type State = {
@@ -187,7 +189,7 @@ export class TicketList extends React.Component<Props, State> {
                     this.showTicketWindow();
                 }}
             >
-                Add Ticket
+                <FontAwesomeIcon icon={faPlus} /> Add Ticket
             </div>
         );
     }
