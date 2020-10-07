@@ -72,6 +72,13 @@ tr td:first-child {
   font-size: 1.05em;
   font-weight: 600;
 }
+.tk-edit-section {
+  color: #FFF;
+  float: right;
+}
+.tk-edit-section i {
+  margin: 0 8px;
+}
 .ticket-toolbar {
   padding: 6px;
   border-bottom: 1px solid #CCC;
