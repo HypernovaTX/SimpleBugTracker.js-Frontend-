@@ -28,19 +28,14 @@ type State = {
  *      title: string, (the title of the ticket)
  *      desctiption: string, (the ticket description)
  *      status: integer, (the number for the status - look up hbt_status for the "stid")
- *      priority: integer (the number for the priority - look up hbt_priority for the "prid")
+ *      priority: integer, (the number for the priority - look up hbt_priority for the "prid")
+ *      tid: integer (ticket id number, put "-1" for new tickets)
  * ]
  * DO NOT PUT THE ITEMS IN THE WRONG ORDER!
  */
 
 export class TicketList extends React.Component<Props, State> {
     private API_Request: NodeJS.Timeout;    //Used for making calls to the backend for list of tickets           
-    private popupItems = {                  //Used for options in the popup window
-        title: '',
-        description: '',
-        status: 1,
-        priority: 5
-    };
 
     constructor(p: Props) {
         super(p);
@@ -57,7 +52,7 @@ export class TicketList extends React.Component<Props, State> {
             topBarUpdate: false,
             newTicket: false,
             popupAlpha: 0,
-            editTicketInfo: [false, '', '', 0, 0]
+            editTicketInfo: [false, '', '', 0, 0, -1]
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -131,12 +126,12 @@ export class TicketList extends React.Component<Props, State> {
 
     
 
-    showTicketWindow = (newTk = false, title = '', description = '', status = 0, priority = 0) => {
+    showTicketWindow = (newTk = false, title = '', description = '', status = 0, priority = 0, tid = -1) => {
         if (this.state.popup === false) {
             this.setState({
                 popup: true,
                 editTicketInfo: [
-                    newTk, title, description, status, priority
+                    newTk, title, description, status, priority, tid
                 ]
             });
             //document.body.style.position = 'fixed';
@@ -209,7 +204,7 @@ export class TicketList extends React.Component<Props, State> {
                 className='add-ticket-button'
                 onClick={() => {
                     this.setState({ newTicket: true });
-                    this.showTicketWindow(false, '', '', 1, 5);
+                    this.showTicketWindow(false, '', '', 1, 5, -1);
                 }}
             >
                 <FontAwesomeIcon icon={faPlus} /> Add Ticket
@@ -228,8 +223,8 @@ export class TicketList extends React.Component<Props, State> {
             status = {this.state.editTicketInfo[3]}
             priority = {this.state.editTicketInfo[4]}
             disable = {disable}
-            new = {this.state.editTicketInfo[0]}
             closeWindow = {this.closeTicketWindow}
+            tid = {this.state.editTicketInfo[5]}
         />);
     }
 

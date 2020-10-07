@@ -12,7 +12,7 @@ type Props = {
     status: number,
     priority: number, 
     disable: boolean,
-    new: boolean,
+    tid: number,
     closeWindow: CallableFunction
 };
 type State = {
@@ -44,7 +44,7 @@ export class EditTicket extends React.Component<Props, State> {
             buttonText: <span key='spb_submit'>Submit</span>,
             blankTitle: false,
             blankDescription: false,
-            new: this.props.new
+            new: (this.props.tid === -1) ? true : false
         };
     }
 
@@ -88,9 +88,10 @@ export class EditTicket extends React.Component<Props, State> {
             description: this.state.description,
             uid: 1,
             platform: 1,
-            time: Math.floor(Date.now() / 1000)
+            time: Math.floor(Date.now() / 1000),
+            tid: this.props.tid
         }
-        const URL = (this.props.new) ? 'newticket' : 'newticket';
+        const URL = (this.state.new) ? 'newticket' : 'newticket';
         console.log('priorityType: '+ (typeof postData.priority));
         axios.post(CONFIG.api.source + URL, postData)
         .then((response) => {
@@ -176,7 +177,7 @@ export class EditTicket extends React.Component<Props, State> {
                     <form key='popupWindow_form' method='POST'>
                         <div key='pu_form_title' className='form-block'>
                             <div key='pu_title_name' className='pu-maintitle'>
-                                {(this.props.new === false) ? 'Update a ticket' : 'Add a ticket'}
+                                {(this.state.new === false) ? 'Update a ticket' : 'Add a ticket'}
                             </div>
                         </div>
                         <div key='pu_title_block' className='form-block'>
