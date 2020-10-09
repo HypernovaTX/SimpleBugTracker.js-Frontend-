@@ -91,7 +91,7 @@ export class EditTicket extends React.Component<Props, State> {
             time: Math.floor(Date.now() / 1000),
             tid: this.props.tid
         }
-        const URL = (this.state.new) ? 'newticket' : 'newticket';
+        const URL = (this.state.new) ? 'newticket' : 'updateticket';
         console.log('priorityType: '+ (typeof postData.priority));
         axios.post(CONFIG.api.source + URL, postData)
         .then((response) => {
