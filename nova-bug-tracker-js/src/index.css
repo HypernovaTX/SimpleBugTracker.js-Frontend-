@@ -72,6 +72,9 @@ tr td:first-child {
   font-size: 1.05em;
   font-weight: 600;
 }
+.ticket-description {
+  white-space: pre-line;
+}
 .tk-edit-section {
   color: #FFF;
   float: right;
