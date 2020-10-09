@@ -1,7 +1,7 @@
 import React from 'react';
 import { Misc } from './misc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCircle, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 /* HOW TO USE TEMPLATE
  * 
@@ -67,7 +67,10 @@ export class Template extends React.Component<Props, State> {
                             </div>
                         </div>
                         <div key={`ticketTitle${tid}`} className="ticket-title">
-                            #{tid} - {title}
+                        <FontAwesomeIcon
+                            icon={faCircle}
+                            style={{color: `#${prioritycolor}`}}
+                        /> #{tid} - {title}
                         </div>
                     </div>
                     <div key={`ticketToolbar${tid}`} className="ticket-toolbar">

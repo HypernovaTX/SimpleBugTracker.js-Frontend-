@@ -152,6 +152,7 @@ export class TicketList extends React.Component<Props, State> {
             //document.body.style.overflowY = 'auto';
             setTimeout(() => {
                 this.setState({ popup: false });
+                this.getData();
             }, 500);
         }
     }
