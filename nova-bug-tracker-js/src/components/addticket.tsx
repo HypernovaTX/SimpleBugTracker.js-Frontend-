@@ -174,7 +174,7 @@ export class EditTicket extends React.Component<Props, State> {
         return (
             <div key='popup-window-outer' className='popup-window-outer'>
                 <div key='popupWindow' className='popup-window'>
-                    <form key='popupWindow_form' method='POST'>
+                    <form key='popupWindow_form' onSubmit={() => this.startPostingData()}>
                         <div key='pu_form_title' className='form-block'>
                             <div key='pu_title_name' className='pu-maintitle'>
                                 {(this.state.new === false) ? 'Update a ticket' : 'Add a ticket'}
