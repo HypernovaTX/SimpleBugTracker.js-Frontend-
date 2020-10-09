@@ -62,6 +62,9 @@ tr td:first-child {
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
 }
+.ticket-block-data {
+  margin-right: 8px;
+}
 .ticket-head {
   padding: 6px;
   border-bottom: 1px solid #CCC;
@@ -100,6 +103,10 @@ tr td:first-child {
 .ticket-author, .ticket-timestamp, .ticket-status, .ticket-priority {
   color: #333;
   font-size: 0.9em;
+}
+.ticket-status, .ticket-priority {
+  display: inline-block;
+  margin-right: 8px;
 }
 .status-block, .priority-block {
   margin-left: 6px;

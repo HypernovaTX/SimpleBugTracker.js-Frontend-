@@ -171,7 +171,7 @@ export class TicketList extends React.Component<Props, State> {
             if (checkDelete !== -1
             && Misc.isValidTicketItem(JSON.stringify(imported[i]))) {
                 const {
-                    tid, title, time, description,
+                    tid, title, time, lastedit, description,
                     username, statusname, statuscolor,
                     priorityname, prioritycolor, status, priority
                 } = imported[i];
@@ -181,6 +181,7 @@ export class TicketList extends React.Component<Props, State> {
                     tid = {tid}
                     title = {title}
                     time = {time}
+                    lastedit = {lastedit}
                     description = {description}
                     username = {username}
                     status = {status}

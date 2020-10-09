@@ -12,6 +12,7 @@ type Props = {
     tid?: string,
     title?: string,
     time?: number,
+    lastedit?: number,
     description?: string,
     username?: string,
     status?: string,
@@ -45,11 +46,21 @@ export class Template extends React.Component<Props, State> {
     //This renders a block for a single ticket
     ticketItem() {
         const {
-            tid, title, time, description,
+            tid, title, time, lastedit, description,
             username, statusname, statuscolor,
             priorityname, prioritycolor, status, priority
         } = this.props;
-        
+
+        //Only show last edited if it's not null
+        let lastEdited = <span key='Nothing'></span>;
+        if (lastedit !== null) {
+            lastEdited = <span key={`lastEdit${tid}`} className='ticket-block-data'>
+                <b>Last Edited: </b>
+                {Misc.convertRawTimeToDate(lastedit)}
+            </span>;
+        }
+
+        //Main render stuffs
         if (title && description && status && priority && tid !== undefined) {
             return (
                 <div key={`ticket${tid}`} className="ticket-block" id={`ticket-${tid}`}>
@@ -75,10 +86,15 @@ export class Template extends React.Component<Props, State> {
                     </div>
                     <div key={`ticketToolbar${tid}`} className="ticket-toolbar">
                         <div key={`ticketAuthor${tid}`} className="ticket-author">
-                            Created by: {username}
+                            <span key={`lastEdit${tid}`} className='ticket-block-data'>
+                                <b>Created by:</b> {username}
+                            </span>
                         </div>
                         <div key={`ticketTime${tid}`} className="ticket-timestamp">
-                            Created: {Misc.convertRawTimeToDate(time)}
+                            <span key={`lastEdit${tid}`} className='ticket-block-data'>
+                                <b>Created:</b> {Misc.convertRawTimeToDate(time)}
+                            </span>
+                            {lastEdited}
                         </div>
                         <div key={`ticketStatus${tid}`} className="ticket-status">
                             Status: 
