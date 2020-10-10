@@ -157,6 +157,12 @@ export class TicketList extends React.Component<Props, State> {
         }
     }
 
+    deleteTicket = (tid: -1) => {
+        this.setState({
+            editTicketInfo: [false, '', '', 0, 0, tid]
+        });
+    }
+
     /** Format each of the ticket items as a block
      * @param {string} incomingData - Must be an object as tring from the API request (try JSON.stringfy)
      * @returns {JSX.Element[]}
@@ -191,6 +197,7 @@ export class TicketList extends React.Component<Props, State> {
                     priorityname = {priorityname}
                     prioritycolor = {prioritycolor}
                     func_edit = {this.showTicketWindow}
+                    func_delete = {this.deleteTicket}
                 />);
             }
         }

@@ -41,6 +41,12 @@ export class Template extends React.Component<Props, State> {
         } 
         return '';
     };
+     deleteTicket(t: string) {
+        if (this.props.func_delete !== undefined) {
+            this.props.func_delete(t);
+        } 
+        return '';
+    };
 
     //======== Begin Templates ========
     //This renders a block for a single ticket
