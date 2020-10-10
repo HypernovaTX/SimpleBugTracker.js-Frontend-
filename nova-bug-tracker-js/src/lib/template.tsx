@@ -98,7 +98,7 @@ export class Template extends React.Component<Props, State> {
                         </div>
                         {lastEdited}
                         <div key={`ticketStatus${tid}`} className="ticket-status">
-                            Status: 
+                            <b>Status:</b>
                             <span
                                 key={`ticketStatusBlk${tid}`}
                                 className={`status-block status-${statusname}`}
@@ -107,7 +107,7 @@ export class Template extends React.Component<Props, State> {
                             </span>
                         </div>
                         <div key={`ticketPriority${tid}`} className="ticket-priority">
-                            Priority: 
+                            <b>Priority:</b>
                             <span
                                 key={`ticketPriorityBlk${tid}`}
                                 className={`priority-block priority-${priorityname}`}
