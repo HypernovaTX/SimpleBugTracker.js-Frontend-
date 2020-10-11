@@ -19,6 +19,28 @@ export class QuestionBox extends React.Component<Props, State> {
         }
     }
 
+    cancel
+
+    renderDialogueBox(message: string, action: CallableFunction) {
+        return (
+            <div key='dbox_body' className='dbox-body'>
+                <div key='dbox_msg' className='dbox-message'>
+                    <span>{message}</span>
+                </div>
+                <div key='dbox_options' className='dbox-options'>
+                    <div
+                        key='dbox_ok'
+                        className='dbox-button dbox-confirm'
+                        onClick={() => {action}}
+                    >
+                        Confirm
+                    </div>
+                    <div key='dbox_cxl' className='dbox-button dbox-cancel'>Cancel</div>
+                </div>
+            </div>
+        );
+    }
+
     render() {
         let data = '';
         if (this.props.showDisplay) {
