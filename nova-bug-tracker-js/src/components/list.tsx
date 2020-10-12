@@ -3,25 +3,28 @@ import axios from 'axios';
 import * as CONFIG from '../config.json';
 import { Template } from '../lib/template';
 import { EditTicket } from './addticket';
+import { Dbox } from './dialoguebox';
 import { Misc } from '../lib/misc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 type Props = { showDisplay: boolean };
 type State = {
-    listItems: string,          //Items on the list (as objects as per item and list as arrays)
-    filter: string[],           //Used for filtering the list
-    loading: boolean,           //Used for loading that loads list
-    globalLoading: boolean,     //User for loading that covers the entire screen
-    sortItem: string,           //sort by type
-    sortDirection: boolean,     //sort direction (true - ASC, false - DESC)
-    popup: boolean,             //Used for pop-up editor
-    topBarBG: string,           //List top bar BG color
-    topBarBS: string,           //List top bar Box Shadow
-    topBarUpdate: boolean,      //Used to force re-redering when the top bar style is updated
-    newTicket: boolean,         //Used to assgin the ticket editor whether the ticket is a new or an edit
-    popupAlpha: number,         //Popup window visibility
-    editTicketInfo: any[]       //Used for sending data to the popup window
+    listItems: string,              //Items on the list (as objects as per item and list as arrays)
+    filter: string[],               //Used for filtering the list
+    loading: boolean,               //Used for loading that loads list
+    globalLoading: boolean,         //User for loading that covers the entire screen
+    sortItem: string,               //sort by type
+    sortDirection: boolean,         //sort direction (true - ASC, false - DESC)
+    popup: number,                  //Used for pop-up editor (0 - no popup, 1 - editor window, 2 - dialogue box)
+    topBarBG: string,               //List top bar BG color
+    topBarBS: string,               //List top bar Box Shadow
+    topBarUpdate: boolean,          //Used to force re-redering when the top bar style is updated
+    newTicket: boolean,             //Used to assgin the ticket editor whether the ticket is a new or an edit
+    popupAlpha: number,             //Popup window visibility
+    editTicketInfo: any[],          //Used for sending data to the popup window
+    dBoxAction: CallableFunction,   //Function for dialogue box to use upon confirming
+    dBoxMessage: string             //Message on the dialogue box
 };
 /** INFO for this.state.editTicketInfo: [
  *      new: bool, (whether this is a new ticket or editing an existing ticket)
@@ -46,13 +49,15 @@ export class TicketList extends React.Component<Props, State> {
             globalLoading: true,
             sortItem: 'tid',
             sortDirection: true,
-            popup: false,
+            popup: 0,
             topBarBG: 'none',
             topBarBS: 'none',
             topBarUpdate: false,
             newTicket: false,
             popupAlpha: 0,
-            editTicketInfo: [false, '', '', 0, 0, -1]
+            editTicketInfo: [false, '', '', 0, 0, -1],
+            dBoxAction: () => {},
+            dBoxMessage: ''
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -127,9 +132,9 @@ export class TicketList extends React.Component<Props, State> {
     
 
     showTicketWindow = (newTk = false, title = '', description = '', status = 0, priority = 0, tid = -1) => {
-        if (this.state.popup === false) {
+        if (this.state.popup === 0) {
             this.setState({
-                popup: true,
+                popup: 1,
                 editTicketInfo: [
                     newTk, title, description, status, priority, tid
                 ]
@@ -145,21 +150,46 @@ export class TicketList extends React.Component<Props, State> {
         }
     }
 
-    closeTicketWindow = () => {
-        if (this.state.popup === true) {
+    showDialogueBox = (action: CallableFunction, message: string) => {
+        if (this.state.popup === 0) {
+            this.setState({
+                popup: 2,
+                dBoxAction: action,
+                dBoxMessage: message
+            });
+            //document.body.style.position = 'fixed';
+            //document.body.style.y = window.pageYOffset;
+            //document.body.style.overflowY = 'scroll';
+            this.setState({ popupAlpha: 0 });
+            setTimeout(() => {
+                this.setState({ popupAlpha: 1 });
+                this.forceUpdate();
+            }, 10);
+        }
+    }
+
+    //Used to close any popup windows
+    closePopupWindow = () => {
+        if (this.state.popup > 0) {
             this.setState({ popupAlpha: 0 });
             //document.body.style.position = 'static';
             //document.body.style.overflowY = 'auto';
             setTimeout(() => {
-                this.setState({ popup: false });
+                this.setState({ popup: 0 });
                 this.getData();
             }, 500);
         }
     }
 
     deleteTicket = (tid: -1) => {
-        this.setState({
-            editTicketInfo: [false, '', '', 0, 0, tid]
+        const postData = {
+            tid: tid
+        }
+        axios.post(`${CONFIG.api.source}deleteticket`, postData)
+        .then((response) => {
+            if (response.data === 'DELETED') {
+                setTimeout(() => this.closePopupWindow(), 500);
+            }
         });
     }
 
@@ -197,7 +227,8 @@ export class TicketList extends React.Component<Props, State> {
                     priorityname = {priorityname}
                     prioritycolor = {prioritycolor}
                     func_edit = {this.showTicketWindow}
-                    func_delete = {this.deleteTicket}
+                    func_delete = {this.showDialogueBox}
+                    func_dBox = {this.deleteTicket}
                 />);
             }
         }
@@ -232,8 +263,21 @@ export class TicketList extends React.Component<Props, State> {
             status = {this.state.editTicketInfo[3]}
             priority = {this.state.editTicketInfo[4]}
             disable = {disable}
-            closeWindow = {this.closeTicketWindow}
+            closeWindow = {this.closePopupWindow}
             tid = {this.state.editTicketInfo[5]}
+        />);
+    }
+
+    formatDialogueBox(): JSX.Element {
+        const { popupAlpha, dBoxAction, dBoxMessage } = this.state;
+        let disable = false;
+        if (popupAlpha === 0) { disable = true; }
+        return (<Dbox
+            key = 'popupWindowBody'
+            message = {dBoxMessage}
+            action = {dBoxAction}
+            cancel = {this.closePopupWindow}
+            disabled = {disable}
         />);
     }
 
@@ -297,14 +341,20 @@ export class TicketList extends React.Component<Props, State> {
         }
 
         //used for the popup overlay and window
-        if (popup === true) {
+        if (popup > 0) {
             const popupStyle = { opacity: popupAlpha };
-            popupContainer = (
-                <div key='popupShadow' className='popup-shadow' style={popupStyle}>
-                    <div key='popUpClose' className='popup-close-button' onClick={this.closeTicketWindow}>
+            let closeButton = <div key='noPopupCloseButton'></div>
+            if (popup === 1) {
+                closeButton = (
+                    <div key='popUpClose' className='popup-close-button' onClick={this.closePopupWindow}>
                         {'Exit & discard [ESC]'}
                     </div>
-                    {this.formatTicketAuditWindow()}
+                );
+            }
+            popupContainer = (
+                <div key='popupShadow' className='popup-shadow' style={popupStyle}>
+                    {closeButton}
+                    {(popup === 1) ? this.formatTicketAuditWindow() : this.formatDialogueBox()}
                 </div>
             );
         }

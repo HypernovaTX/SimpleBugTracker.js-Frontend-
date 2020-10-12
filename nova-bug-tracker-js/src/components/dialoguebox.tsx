@@ -5,23 +5,36 @@ import React from 'react';
 //import { type } from 'os';
 //import { ReactComponent } from '*.svg';
 
-type Props = { showDisplay: boolean };
+type Props = {
+    message: string,
+    action: CallableFunction,
+    cancel: CallableFunction,
+    disabled: boolean
+};
 type State = {
-    item: string
+    disabled: boolean
 };
 
-export class QuestionBox extends React.Component<Props, State> {
+export class Dbox extends React.Component<Props, State> {
 
     constructor(p: Props) {
         super(p);
         this.state = {
-            item: ''
+            disabled: this.props.disabled
         }
     }
+    
+    takeAction(confirm: boolean) {
+        if (this.props.disabled === false) {
+            (confirm === false) ? this.props.cancel() : this.props.action();
+            this.setState({ disabled: true });
+        }
+    };
 
-    cancel
-
-    renderDialogueBox(message: string, action: CallableFunction) {
+    renderDialogueBox() {
+        const { message, disabled } = this.props;
+        let buttonClass = 'dbox-button';
+        if (disabled === true) { buttonClass = 'dbox-button-disabled'; }
         return (
             <div key='dbox_body' className='dbox-body'>
                 <div key='dbox_msg' className='dbox-message'>
@@ -29,13 +42,19 @@ export class QuestionBox extends React.Component<Props, State> {
                 </div>
                 <div key='dbox_options' className='dbox-options'>
                     <div
-                        key='dbox_ok'
-                        className='dbox-button dbox-confirm'
-                        onClick={() => {action}}
+                        key = 'dbox_ok'
+                        className = {`${buttonClass} dbox-confirm`}
+                        onClick = {() => {this.takeAction(true)}}
                     >
                         Confirm
                     </div>
-                    <div key='dbox_cxl' className='dbox-button dbox-cancel'>Cancel</div>
+                    <div
+                        key='dbox_cxl'
+                        className = {`${buttonClass} dbox-cancel`}
+                        onClick={() => {this.takeAction(false)}}
+                    >
+                        Cancel
+                    </div>
                 </div>
             </div>
         );
@@ -43,9 +62,6 @@ export class QuestionBox extends React.Component<Props, State> {
 
     render() {
         let data = '';
-        if (this.props.showDisplay) {
-            data = '?';
-        }
 
         return (
             <div key="sidebar" className="sidebar">{data}</div>
