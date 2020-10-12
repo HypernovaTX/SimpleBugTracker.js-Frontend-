@@ -235,7 +235,7 @@ select.dropdown:active {
   box-shadow: 8px 8px 12px rgba(0, 0, 0, 0.4);
   text-shadow: 0 0 16px #FFF;
 }
-.dbox-button {
+.dbox-body {
   min-width: 20%;
 }
 .pu-maintitle {
@@ -310,13 +310,13 @@ select.dropdown:active {
   width: 50%;
 }
 .dbox-button, .dbox-button-disabled {
-  margin: 4px auto;
+  margin: 4px;
   background: #333;
   color: #FFF;
   padding: 4px 8px;
   text-shadow: 0 0 black;
   display: inline-block;
-  width: 40%;
+  width: -webkit-fill-available;
   text-align: center;
   font-size: 0.8em;
   border-radius: 12px;

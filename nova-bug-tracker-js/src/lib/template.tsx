@@ -13,6 +13,7 @@ type Props = {
     title?: string,
     time?: number,
     lastedit?: number,
+    lastuser?: string,
     description?: string,
     username?: string,
     status?: string,
@@ -44,7 +45,7 @@ export class Template extends React.Component<Props, State> {
     deleteTicket(tid: number) {
         if (this.props.func_delete !== undefined) {
             console.log('delete ticket box')
-            this.props.func_delete('delete', `Are you want you want to delete ticket #${tid}?`, tid);
+            this.props.func_delete('delete', `Confirm to ticket #${tid}?`, tid);
         } 
         return '';
     };
@@ -54,18 +55,20 @@ export class Template extends React.Component<Props, State> {
     ticketItem() {
         const {
             tid, title, time, lastedit, description,
-            username, statusname, statuscolor,
+            username, statusname, statuscolor, lastuser,
             priorityname, prioritycolor, status, priority
         } = this.props;
 
         //Only show last edited if it's not null
         let lastEdited = <span key='Nothing'></span>;
-        if (lastedit !== null) {
+        if (lastedit !== null && lastuser !== null) {
             lastEdited = (
                 <div key={`ticketLastEdit${tid}`} className="ticket-timestamp">
+                    <span key={`tk_lastauthor_${tid}`} className='ticket-block-data'>
+                        <b>Last Edited By:</b> {username}
+                    </span>
                     <span key={`lastEdit${tid}`} className='ticket-block-data'>
-                        <b>Last Edited: </b>
-                        {Misc.convertRawTimeToDate(lastedit)}
+                        <b>Last Edited On: </b> {Misc.convertRawTimeToDate(lastedit)}
                     </span>
                 </div>);
         }
@@ -101,10 +104,10 @@ export class Template extends React.Component<Props, State> {
                     <div key={`ticketToolbar${tid}`} className="ticket-toolbar">
                         <div key={`ticket_creation${tid}`} className="ticket-author">
                             <span key={`tk_author_${tid}`} className='ticket-block-data'>
-                                <b>Created by:</b> {username}
+                                <b>Created By:</b> {username}
                             </span>
                             <span key={`tk_createtime_${tid}`} className='ticket-block-data'>
-                                <b>Created on:</b> {Misc.convertRawTimeToDate(time)}
+                                <b>Created On:</b> {Misc.convertRawTimeToDate(time)}
                             </span>
                         </div>
                         {lastEdited}

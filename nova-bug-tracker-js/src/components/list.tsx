@@ -199,7 +199,7 @@ export class TicketList extends React.Component<Props, State> {
             && Misc.isValidTicketItem(JSON.stringify(imported[i]))) {
                 const {
                     tid, title, time, lastedit, description,
-                    username, statusname, statuscolor,
+                    username, statusname, statuscolor, lastuser,
                     priorityname, prioritycolor, status, priority
                 } = imported[i];
                 output.push(<Template
@@ -209,6 +209,7 @@ export class TicketList extends React.Component<Props, State> {
                     title = {title}
                     time = {time}
                     lastedit = {lastedit}
+                    lastuser = {lastuser}
                     description = {description}
                     username = {username}
                     status = {status}
