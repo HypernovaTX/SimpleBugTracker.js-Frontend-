@@ -1,13 +1,14 @@
 import React from 'react';
-//import axios from 'axios';
-//import * as CONFIG from '../config.json';
+import axios from 'axios';
+import * as CONFIG from '../config.json';
 //import { TEMPLATE } from '../lib/template';
 //import { type } from 'os';
 //import { ReactComponent } from '*.svg';
 
 type Props = {
     message: string,
-    action: CallableFunction,
+    action: string,
+    value: any,
     cancel: CallableFunction,
     disabled: boolean
 };
@@ -20,19 +21,54 @@ export class Dbox extends React.Component<Props, State> {
     constructor(p: Props) {
         super(p);
         this.state = {
-            disabled: this.props.disabled
+            disabled: !this.props.disabled
         }
+    }
+
+    componentDidMount() {
+        window.addEventListener('keydown', this.handleKeypress);
+    }
+
+    handleKeypress = (ev: KeyboardEvent) => {
+        if (ev.key === 'Escape'){ this.takeAction(false); }
+        if (ev.key === 'Enter'){ this.takeAction(true); }
+    }
+
+    deleteTicket = () => {
+        const postData = {
+            tid: this.props.value
+        }
+        axios.post(`${CONFIG.api.source}deleteticket`, postData)
+        .then((response) => {
+            if (response.data === 'DELETED') {
+                setTimeout(() => {
+                    this.props.cancel();
+                    this.setState({ disabled: true });
+                }, 500);
+            }
+        });
     }
     
     takeAction(confirm: boolean) {
-        if (this.props.disabled === false) {
-            (confirm === false) ? this.props.cancel() : this.props.action();
+        if (this.state.disabled === false) {
+            if (confirm === false) { this.props.cancel(); }
+            else { this.determineAction(); }
+
+            if (confirm === false) {console.log('cancel')}
+            else {console.log('confirm')}
             this.setState({ disabled: true });
         }
     };
+    determineAction() {
+        switch (this.props.action) {
+            case('delete'): this.deleteTicket(); break;
+            default: this.props.cancel(); break;
+        }
+    }
 
     renderDialogueBox() {
-        const { message, disabled } = this.props;
+        const { message } = this.props;
+        const { disabled } = this.state;
         let buttonClass = 'dbox-button';
         if (disabled === true) { buttonClass = 'dbox-button-disabled'; }
         return (

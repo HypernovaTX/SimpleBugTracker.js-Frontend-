@@ -23,8 +23,9 @@ type State = {
     newTicket: boolean,             //Used to assgin the ticket editor whether the ticket is a new or an edit
     popupAlpha: number,             //Popup window visibility
     editTicketInfo: any[],          //Used for sending data to the popup window
-    dBoxAction: CallableFunction,   //Function for dialogue box to use upon confirming
-    dBoxMessage: string             //Message on the dialogue box
+    dBoxAction: string,             //The action string to let dbox know what to do.
+    dBoxMessage: string,            //Message on the dialogue box
+    dBoxValue: number          //The target ticket to delete
 };
 /** INFO for this.state.editTicketInfo: [
  *      new: bool, (whether this is a new ticket or editing an existing ticket)
@@ -56,8 +57,9 @@ export class TicketList extends React.Component<Props, State> {
             newTicket: false,
             popupAlpha: 0,
             editTicketInfo: [false, '', '', 0, 0, -1],
-            dBoxAction: () => {},
-            dBoxMessage: ''
+            dBoxAction: '',
+            dBoxMessage: '',
+            dBoxValue: -1
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -150,12 +152,13 @@ export class TicketList extends React.Component<Props, State> {
         }
     }
 
-    showDialogueBox = (action: CallableFunction, message: string) => {
+    showDialogueBox = (action: string, message: string, specialValue: number) => {
         if (this.state.popup === 0) {
             this.setState({
                 popup: 2,
+                dBoxMessage: message,
                 dBoxAction: action,
-                dBoxMessage: message
+                dBoxValue: specialValue
             });
             //document.body.style.position = 'fixed';
             //document.body.style.y = window.pageYOffset;
@@ -179,18 +182,6 @@ export class TicketList extends React.Component<Props, State> {
                 this.getData();
             }, 500);
         }
-    }
-
-    deleteTicket = (tid: number) => {
-        const postData = {
-            tid: tid
-        }
-        axios.post(`${CONFIG.api.source}deleteticket`, postData)
-        .then((response) => {
-            if (response.data === 'DELETED') {
-                setTimeout(() => this.closePopupWindow(), 500);
-            }
-        });
     }
 
     /** Format each of the ticket items as a block
@@ -228,7 +219,6 @@ export class TicketList extends React.Component<Props, State> {
                     prioritycolor = {prioritycolor}
                     func_edit = {this.showTicketWindow}
                     func_delete = {this.showDialogueBox}
-                    func_dBox = {this.deleteTicket}
                 />);
             }
         }
@@ -269,12 +259,13 @@ export class TicketList extends React.Component<Props, State> {
     }
 
     formatDialogueBox(): JSX.Element {
-        const { popupAlpha, dBoxAction, dBoxMessage } = this.state;
+        const { popupAlpha, dBoxAction, dBoxMessage, dBoxValue } = this.state;
         let disable = false;
         if (popupAlpha === 0) { disable = true; }
         return (<Dbox
             key = 'popupWindowBody'
             message = {dBoxMessage}
+            value = {dBoxValue}
             action = {dBoxAction}
             cancel = {this.closePopupWindow}
             disabled = {disable}

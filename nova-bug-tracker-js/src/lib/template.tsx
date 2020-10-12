@@ -22,8 +22,7 @@ type Props = {
     priorityname?: string,
     prioritycolor?: string,
     func_edit: CallableFunction,
-    func_delete: CallableFunction,
-    func_dBox: CallableFunction
+    func_delete: CallableFunction
 }
 
 type State = {
@@ -44,7 +43,8 @@ export class Template extends React.Component<Props, State> {
     };
     deleteTicket(tid: number) {
         if (this.props.func_delete !== undefined) {
-            this.props.func_delete(this.props.func_dBox(tid), `Are you want you want to delete ticket #${tid}?`);
+            console.log('delete ticket box')
+            this.props.func_delete('delete', `Are you want you want to delete ticket #${tid}?`, tid);
         } 
         return '';
     };

@@ -235,6 +235,9 @@ select.dropdown:active {
   box-shadow: 8px 8px 12px rgba(0, 0, 0, 0.4);
   text-shadow: 0 0 16px #FFF;
 }
+.dbox-button {
+  min-width: 20%;
+}
 .pu-maintitle {
   font-size: 1.5em;
   color: #333;
@@ -326,6 +329,6 @@ select.dropdown:active {
 .dbox-confirm:hover { background: #ff6749; }
 .dbox-confirm:active { background: #ffa391; }
 .dbox-button-disabled {
-  background: #888;
+  background: #888 !important;
   color: #555;
 }
