@@ -40,7 +40,7 @@ export class Dbox extends React.Component<Props, State> {
                 <div key='dbox_msg' className='dbox-message'>
                     <span>{message}</span>
                 </div>
-                <div key='dbox_options' className='dbox-options'>
+                <div key='dbox_option1' className='dbox-options'>
                     <div
                         key = 'dbox_ok'
                         className = {`${buttonClass} dbox-confirm`}
@@ -48,6 +48,8 @@ export class Dbox extends React.Component<Props, State> {
                     >
                         Confirm
                     </div>
+                </div>
+                <div key='dbox_option2' className='dbox-options'>
                     <div
                         key='dbox_cxl'
                         className = {`${buttonClass} dbox-cancel`}
@@ -61,10 +63,10 @@ export class Dbox extends React.Component<Props, State> {
     }
 
     render() {
-        let data = '';
+        let data = this.renderDialogueBox();
 
         return (
-            <div key="sidebar" className="sidebar">{data}</div>
+            <div key="popup-window-outer" className="popup-window-outer">{data}</div>
         );
     }
 }

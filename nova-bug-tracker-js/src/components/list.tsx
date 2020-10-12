@@ -181,7 +181,7 @@ export class TicketList extends React.Component<Props, State> {
         }
     }
 
-    deleteTicket = (tid: -1) => {
+    deleteTicket = (tid: number) => {
         const postData = {
             tid: tid
         }

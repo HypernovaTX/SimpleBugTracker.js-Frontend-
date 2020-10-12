@@ -21,9 +21,9 @@ type Props = {
     priority?: string,
     priorityname?: string,
     prioritycolor?: string,
-    func_edit?: CallableFunction,
-    func_delete?: CallableFunction,
-    func_dBox?: CallableFunction
+    func_edit: CallableFunction,
+    func_delete: CallableFunction,
+    func_dBox: CallableFunction
 }
 
 type State = {
@@ -42,9 +42,9 @@ export class Template extends React.Component<Props, State> {
         } 
         return '';
     };
-    deleteTicket(t: string) {
+    deleteTicket(tid: number) {
         if (this.props.func_delete !== undefined) {
-            this.props.func_delete(this.props.func_dBox, t);
+            this.props.func_delete(this.props.func_dBox(tid), `Are you want you want to delete ticket #${tid}?`);
         } 
         return '';
     };
@@ -86,7 +86,7 @@ export class Template extends React.Component<Props, State> {
                             <div
                                 key={`tkes_delete${tid}`}
                                 className='tk-edit-button'
-                                onClick={() => {this.deleteTicket(`Do you want to delete ticket #${tid}?`)}}
+                                onClick={() => {this.deleteTicket(parseInt(tid))}}
                             >
                                 <FontAwesomeIcon icon={faTrash} /> Delete
                             </div>
