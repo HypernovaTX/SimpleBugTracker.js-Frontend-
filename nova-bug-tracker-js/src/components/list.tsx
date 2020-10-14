@@ -25,8 +25,22 @@ type State = {
     editTicketInfo: any[],          //Used for sending data to the popup window
     dBoxAction: string,             //The action string to let dbox know what to do.
     dBoxMessage: string,            //Message on the dialogue box
-    dBoxValue: number          //The target ticket to delete
+    dBoxValue: number,              //The target ticket to delete
+    ticketPosition: number,         //Which tickets to show depends on the scrollbar position
+    scrollOffset: number
 };
+
+/* Infinite page scroll concept
+1. Call to the backend with the number of tickets (itemsPerView from config.json > general) to the backend
+2. If the view scrolled to the end of the page, update the ticketPosition (if it's at 0, end the event) and scrollOffset
+    and then call the backend again, then update the scrollbar position
+3. If the database returns "NO DATA", revert the ticket Position
+
+Formula:
+    OFFSET = math.max((ticketPosition - 1) * itemsPerView, 0);
+    LIMIT =  itemsPerView * 3;
+*/
+
 /** INFO for this.state.editTicketInfo: [
  *      new: bool, (whether this is a new ticket or editing an existing ticket)
  *      title: string, (the title of the ticket)
@@ -59,7 +73,9 @@ export class TicketList extends React.Component<Props, State> {
             editTicketInfo: [false, '', '', 0, 0, -1],
             dBoxAction: '',
             dBoxMessage: '',
-            dBoxValue: -1
+            dBoxValue: -1,
+            ticketPosition: 0,
+            scrollOffset: 0
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors

@@ -1,7 +1,8 @@
 {
     "general": {
         "timezone": -5,
-        "refreshInterval": 5000
+        "refreshInterval": 5000,
+        "itemsPerView": 10
     },
     "api": {
         "source": "http://localhost:8080/",
