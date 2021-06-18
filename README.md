@@ -5,13 +5,13 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-th-project">About The Project</a>
+      <a href="#about-the-project">About The Project</a>
       <ul>
         <li><a href="#back-end">Back end</a></li>
       </ul>
     </li>
     <li>
-      <a href="#built-with">Built with</a>
+      <a href="#built-with-front-end">Built with</a>
       <ul>
         <li><a href="#installation">Installation</a></li>
       </ul>
