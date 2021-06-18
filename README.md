@@ -40,15 +40,11 @@ The back end is a separate project which can be accessed here: https://github.co
     ```sh
     git clone https://github.com/HypernovaTX/SimpleBugTracker.js-Frontend-.git
     ```
-2. Navigate to the project root directory:
-    ```sh
-    cd ./nova-bug-tracker-js
-    ```
-3. Install NPM packages
+2. Install NPM packages
     ```sh
     npm install
     ```
-4. To start testing
+3. To start testing
     ```sh
     npm start
     ```
